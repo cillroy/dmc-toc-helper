@@ -3,144 +3,222 @@
 <head>
     <title>docs.microsoft.com Table of Content Helper - PoC</title>
     <script type="text/javascript" src="includes/toc-helper.js"></script>
-    <link rel="stylesheet" type="text/css" href="/includes/toc-helper.css" />
-    <link rel="stylesheet" type="text/css" href="/includes/w3.css" />
-    <link rel="stylesheet" type="text/css" href="/includes/codemirror.css" />
-    <script>
-        if (window.addEventListener) {
-            window.addEventListener("resize", browserResize);
-        } else if (window.attachEvent) {
-            window.attachEvent("onresize", browserResize);
+    <link rel="stylesheet" type="text/css" href="includes/toc-helper.css" />
+
+    <script src="assets/fancytree/lib/jquery.js"></script>
+
+    <link href="assets/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">
+    <script src="assets/fancytree/src/jquery-ui-dependencies/jquery.fancytree.ui-deps.js"></script>
+    <script src="assets/fancytree/src/jquery.fancytree.js"></script>
+    <script src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
+    <script src="assets/fancytree/src/jquery.fancytree.edit.js"></script>
+    <script src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
+
+    <style type="text/css">
+        span.drag-source {
+            border: 1px solid grey;
+            border-radius: 3px;
+            padding: 2px;
+            background-color: silver
         }
-        var xbeforeResize = window.innerWidth;
 
-        function browserResize() {
-            var afterResize = window.innerWidth;
-            if ((xbeforeResize < (970) && afterResize >= (970)) || (xbeforeResize >= (970) && afterResize < (970)) ||
-                (xbeforeResize < (728) && afterResize >= (728)) || (xbeforeResize >= (728) && afterResize < (728)) ||
-                (xbeforeResize < (468) && afterResize >= (468)) || (xbeforeResize >= (468) && afterResize < (468))) {
-                xbeforeResize = afterResize;
-
-                googletag.cmd.push(function () {
-                    googletag.pubads().refresh([gptAdSlots[0]]);
-                });
-
-            }
-            if (window.screen.availWidth <= 768) {
-                restack(window.innerHeight > window.innerWidth);
-            }
-            fixDragBtn();
-            showFrameSize();
+        ul.fancytree-container {
+            max-height: 200px;
+            overflow-y: scroll;
         }
-        var fileID = "";
-        var loadSave = false;
 
-        function getSavedFile() {
-            loadSave = true;
-            var htmlCode;
-            var paramObj = {};
-            paramObj.fileid = "";
-            fileID = paramObj.fileid;
-            var paramA = JSON.stringify(paramObj);
-            var httpA = new XMLHttpRequest();
-            httpA.open("POST", globalURL, true);
-            httpA.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            httpA.onreadystatechange = function () {
-                if (httpA.readyState == 4 && httpA.status == 200) {
-                    document.getElementById("textareaCode").value = httpA.responseText;
-                    window.editor.getDoc().setValue(httpA.responseText);
-                    loadSave = false;
+        span.fancytree-node.fancytree-drag-source {
+            outline: 1px dotted grey;
+        }
+
+        /*
+        span.fancytree-node.fancytree-drag-source.fancytree-drag-remove {
+          opacity: 0.4;
+        }
+        span.fancytree-node.fancytree-drop-over {
+          outline: 1px solid gray;
+        }
+      */
+
+        span.fancytree-node.fancytree-drop-accept {
+            outline: 1px dotted green;
+        }
+
+        span.fancytree-node.fancytree-drop-reject {
+            outline: 1px dotted red;
+        }
+    </style>
+
+    <!-- Initialize the tree when page is loaded -->
+    <script type="text/javascript">
+        $(function () { // on page load
+            // Create the tree inside the <div id="tree"> element.
+            $("#tree").fancytree({
+                icon: true,
+                selectMode: 2,
+                extensions: ["edit", "filter", "dnd5"],
+                source: [{
+                        title: "Node 1",
+                        key: "1"
+                    },
+                    {
+                        title: "Folder 2",
+                        key: "2",
+                        folder: true,
+                        children: [{
+                                title: "Node 2.1",
+                                key: "3"
+                            },
+                            {
+                                title: "Node 2.2",
+                                key: "4"
+                            }
+                        ]
+                    }
+                ],
+                dnd5: {
+                    // autoExpandMS: 400,
+                    // preventForeignNodes: true,
+                    // preventNonNodes: true,
+                    // preventRecursiveMoves: true, // Prevent dropping nodes on own descendants
+                    // preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+                    // scroll: true,
+                    // scrollSpeed: 7,
+                    // scrollSensitivity: 10,
+
+                    // --- Drag-support:
+
+                    dragStart: function (node, data) {
+                        /* This function MUST be defined to enable dragging for the tree.
+                         *
+                         * Return false to cancel dragging of node.
+                         * data.dataTransfer.setData() and .setDragImage() is available
+                         * here.
+                         */
+                        //          data.dataTransfer.setDragImage($("<div>hurz</div>").appendTo("body")[0], -10, -10);
+                        return true;
+                    },
+                    dragDrag: function (node, data) {
+                        data.dataTransfer.dropEffect = "move";
+                    },
+                    dragEnd: function (node, data) {},
+
+                    // --- Drop-support:
+
+                    dragEnter: function (node, data) {
+                        // node.debug("dragEnter", data);
+                        data.dataTransfer.dropEffect = "move";
+                        // data.dataTransfer.effectAllowed = "copy";
+                        return true;
+                    },
+                    dragOver: function (node, data) {
+                        data.dataTransfer.dropEffect = "move";
+                        // data.dataTransfer.effectAllowed = "copy";
+                    },
+                    dragLeave: function (node, data) {},
+                    dragDrop: function (node, data) {
+                        /* This function MUST be defined to enable dropping of items on
+                         * the tree.
+                         */
+                        var transfer = data.dataTransfer;
+
+                        node.debug("drop", data);
+
+                        // alert("Drop on " + node + ":\n"
+                        //   + "source:" + JSON.stringify(data.otherNodeData) + "\n"
+                        //   + "hitMode:" + data.hitMode
+                        //   + ", dropEffect:" + transfer.dropEffect
+                        //   + ", effectAllowed:" + transfer.effectAllowed);
+
+                        if (data.otherNode) {
+                            // Drop another Fancytree node from same frame
+                            // (maybe from another tree however)
+                            var sameTree = (data.otherNode.tree === data.tree);
+
+                            data.otherNode.moveTo(node, data.hitMode);
+                        } else if (data.otherNodeData) {
+                            // Drop Fancytree node from different frame or window, so we only have
+                            // JSON representation available
+                            node.addChild(data.otherNodeData, data.hitMode);
+                        } else {
+                            // Drop a non-node
+                            node.addNode({
+                                title: transfer.getData("text")
+                            }, data.hitMode);
+                        }
+                        node.setExpanded();
+                    }
+                },
+                activate: function (event, data) {
+                    //        alert("activate " + data.node);
+                },
+                lazyLoad: function (event, data) {
+                    data.result = {
+                        url: "ajax-sub2.json"
+                    }
+                },
+                edit: {
+                    triggerStart: ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
+                    beforeEdit: function (event, data) {
+                        // Return false to prevent edit mode
+                    },
+                    edit: function (event, data) {
+                        // Editor was opened (available as data.input)
+                    },
+                    beforeClose: function (event, data) {
+                        // Return false to prevent cancel/save (data.input is available)
+                        console.log(event.type, event, data);
+                        if (data.originalEvent.type === "mousedown") {
+                            // We could prevent the mouse click from generating a blur event
+                            // (which would then again close the editor) and return `false` to keep
+                            // the editor open:
+                            //                  data.originalEvent.preventDefault();
+                            //                  return false;
+                            // Or go on with closing the editor, but discard any changes:
+                            //                  data.save = false;
+                        }
+                    },
+                    save: function (event, data) {
+                        // Save data.input.val() or return false to keep editor open
+                        console.log("save...", this, data);
+                        // Simulate to start a slow ajax request...
+                        setTimeout(function () {
+                            $(data.node.span).removeClass("pending");
+                            // Let's pretend the server returned a slightly modified
+                            // title:
+                            data.node.setTitle(data.node.title + "!");
+                        }, 2000);
+                        // We return true, so ext-edit will set the current user input
+                        // as title
+                        return true;
+                    },
+                    close: function (event, data) {
+                        // Editor was removed
+                        if (data.save) {
+                            // Since we started an async request, mark the node as preliminary
+                            $(data.node.span).addClass("pending");
+                        }
+                    }
                 }
-            }
-            httpA.send(paramA);
-        }
+            });
+            // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
+        });
     </script>
 </head>
 
 <body>
-    <div class="trytopnav">
-        <div class="w3-bar w3-light-grey" style="border-top:1px solid #f1f1f1;overflow:auto">
-            <!--
-            <a id="tryhome" href="https://www.w3schools.com" target="_blank" title="w3schools.com Home" class="w3-button w3-bar-item topnav-icons fa fa-home"
-                style="font-size:28px;color:#999999;margin-top:-2px"></a>
-            <a href="javascript:void(0);" onclick="openMenu()" id="menuButton" title="Open Menu" class="w3-dropdown-click w3-button w3-bar-item topnav-icons fa fa-menu"
-                style="font-size:28px;color:#999999;margin-top:-2px"></a>
-            <a href="javascript:void(0);" onclick="click_savebtn()" title="Save" class="w3-button w3-bar-item topnav-icons fa fa-save"
-                style="font-size:28px;color:#999999;margin-top:-2px"></a>
-            <a href="javascript:void(0);" onclick="restack(currentStack)" title="Change Orientation" class="w3-button w3-bar-item topnav-icons fa fa-rotate"
-                style="font-size:28px;color:#999999;margin-top:-2px"></a>
-            -->
-            <button class="w3-button w3-bar-item w3-green w3-hover-white w3-hover-text-green" onclick="submitTryit(1)">Tree > Code</button>
-            <button class="w3-button w3-bar-item w3-green w3-hover-white w3-hover-text-green" onclick="submitTryit(1)">Tree &lt; Code</button>
-            <span class="w3-right w3-hide-medium w3-hide-small" style="padding:8px 8px 8px 8px;display:block"></span>
-            <span class="w3-right w3-hide-small" style="padding:8px 0;display:block;float:right;">
-                <span id="framesize">Result Size:
-                    <span>928 x 495</span>
-                </span>
-            </span>
-        </div>
-
-    </div>
-    <div id="shield" style="display: none;"></div>
-    <a href="javascript:void(0)" id="dragbar" style="width: 5px; top: 138px; left: 965.333px; height: 495px; cursor: col-resize;"></a>
-
     <div id="container">
-            <div id="navbarDropMenu" class="w3-dropdown-content w3-bar-block w3-border" style="z-index:5">
-            <span onclick="openMenu()" class="w3-button w3-display-topright w3-transparent w3-hover-dark-grey" title="Close Menu" style="font-weight:bold;padding-top:10px;padding-bottom:11px;">×</span>
-              <div class="w3-bar-block">
-                <a class="w3-bar-item w3-button" href="javascript:void(0);" title="Change Orientaton" onclick="openMenu();restack(currentStack)"><i class="fa fa-rotate" style="font-size:26px;margin-left:-4px;margin-right:8px"></i><span style="position:relative;top:-4px;left:2px;">Change Orientation</span></a>
-                <a class="w3-bar-item w3-button" href="javascript:void(0);" title="Save" onclick="openMenu();click_savebtn()"><i class="fa fa-save" style="font-size:26px;margin-right:10px;"></i><span style="position:relative;top:-4px;left:2px;">Save Code</span></a>
-                <a class="w3-bar-item w3-button" href="javascript:void(0);" id="saveGDriveBtn" title="Save to Google Drive" onclick="openMenu();click_google_savebtn()"><img src="/images/driveicon_32.png" alt="Save to Google Drive" title="Save to Google Drive" style="margin-right:10px;width:24px;"><span style="position:relative;left:1px;">Save to Google Drive</span></a>
-                <a class="w3-bar-item w3-button" href="javascript:void(0);" id="loadGDriveBtn" title="Load from Google Drive" onclick="openMenu();click_google_loadbtn()"><img src="/images/driveicon_32.png" alt="Load from Google Drive" title="Load from Google Drive" style="margin-right:10px;width:24px;"><span style="position:relative;left:1px;">Load from Google Drive</span></a>
-              </div>
-              <footer class="w3-container w3-small w3-light-gray">
-              <p><a style="display:inline;padding:0;" href="/about/about_privacy.asp" target="_blank" onclick="openMenu();" class="w3-hover-none w3-hover-text-green">Privacy policy</a> and 
-              <a style="display:inline;padding:0;" href="/about/about_copyright.asp" target="_blank" onclick="openMenu();" class="w3-hover-none w3-hover-text-green">Copyright 1999-2018</a></p>
-              </footer>
-            </div>
-            <div id="menuOverlay" class="w3-overlay w3-transparent" style="cursor:pointer;z-index:4"></div>
-              <div id="textareacontainer" style="width: 50.9365%;">
-                <div id="textarea">
-                  <div id="textareawrapper">
-                    <textarea autocomplete="off" id="textareaCode" spellcheck="false" style="display: none;" wrap="logical">Lorem Ipsum
-            </textarea><div class="CodeMirror cm-s-default CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 8px; left: 8px;"><textarea style="position: absolute; bottom: -1em; padding: 0px; width: 1px; height: 1em; outline: medium none currentcolor;" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" wrap="off"></textarea></div><div class="CodeMirror-vscrollbar" cm-not-content="true"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-hscrollbar" cm-not-content="true"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1" draggable="true"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: -17px; border-right-width: 13px; min-height: 26px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: medium none currentcolor;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-cursors" style=""><div class="CodeMirror-cursor" style="left: 4px; top: 0px; height: 18px;">&nbsp;</div></div><div class="CodeMirror-code" style=""><pre class=" CodeMirror-line "><span><span cm-text="">​</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 13px; width: 1px; border-bottom: 0px solid transparent; top: 26px;"></div><div class="CodeMirror-gutters" style="display: none; height: 39px;"></div></div></div>
-                    <form id="codeForm" autocomplete="off" style="margin:0px;display:none;">
-                      <input name="code" id="code" type="hidden">
-                    </form>
-                   </div>
-                </div>
-              </div>
-              <div id="iframecontainer" style="width: 49.0635%;">
-                <div id="iframe">
-                  <div id="iframewrapper"><iframe id="iframeResult" name="iframeResult" frameborder="0"></iframe></div>
-                </div>
-              </div>
-            </div>
-    
-    <div id="err_form" class="w3-modal" style="z-index:4">
-        <div class="w3-modal-content w3-display-container">
-            <span onclick="document.getElementById('err_form').style.display='none'" class="w3-button w3-display-topright w3-text-white w3-padding w3-green"
-                style="font-weight:bold;">×</span>
-            <div class="w3-container w3-green">
-                <h2>Report a Problem:</h2>
-            </div>
-            <form class="w3-container">
-                <p>
-                    <label for="err_email">Your E-mail:</label>
-                    <input class="w3-input w3-border" style="width:100%" id="err_email" name="err_email" type="text">
-                </p>
-                <p>
-                    <label for="err_email">Page address:</label>
-                    <input class="w3-input w3-border" style="width:100%" id="err_url" name="err_url" disabled="disabled" type="text">
-                </p>
-                <p>
-                    <label for="err_email">Description:</label>
-                    <textarea rows="10" class="w3-input w3-border" id="err_desc" name="err_desc" style="width:100%;resize:vertical"></textarea>
-                </p>
-                <button class="w3-btn w3-right w3-green w3-margin-bottom" type="button" onclick="sendErr()">Submit</button>
-            </form>
-
+        <div id="tree_wrapper">
+            <button onclick="makeCode()">Tree > Code</button>
+            <div id="tree"> </div>
         </div>
+        <div id="code_wrapper">
+            <button class="" onclick="updateTree()">Tree &lt; Code</button>
+            <div id="code">
+                <textarea>Code Content</textarea>
+            </div>
+        </div>
+        <div style="float: none;" />
     </div>
 </body>
 
