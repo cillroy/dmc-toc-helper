@@ -10,3 +10,12 @@
     padding: 20px;
     width: 45%;
 }
+
+#code {
+    width: 100%;
+}
+
+.button_wrapper {
+    align-content: center;
+    text-align: center;
+}

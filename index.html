@@ -1,6 +1,9 @@
 <html>
 
 <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
     <title>docs.microsoft.com Table of Content Helper - PoC</title>
     <script type="text/javascript" src="includes/toc-helper.js"></script>
     <link rel="stylesheet" type="text/css" href="includes/toc-helper.css" />
@@ -13,6 +16,8 @@
     <script src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
     <script src="assets/fancytree/src/jquery.fancytree.edit.js"></script>
     <script src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
+    <script src="assets/fancytree/src/jquery.fancytree.childcounter.js"></script>
+  
 
     <style type="text/css">
         span.drag-source {
@@ -54,9 +59,6 @@
         $(function () { // on page load
             // Create the tree inside the <div id="tree"> element.
             $("#tree").fancytree({
-                icon: true,
-                selectMode: 2,
-                extensions: ["edit", "filter", "dnd5"],
                 source: [{
                         title: "Node 1",
                         key: "1"
@@ -74,37 +76,28 @@
                                 key: "4"
                             }
                         ]
+                    },
+                    {
+                        title: "Folder 3",
+                        key: "5",
+                        folder: true,
+                        children: [{
+                            title: "Node 3.1",
+                            key: "6"
+                        }]
                     }
                 ],
+                icon: true,
+                selectMode: 2,
+                extensions: ["edit", "filter", "dnd5"],
                 dnd5: {
-                    // autoExpandMS: 400,
-                    // preventForeignNodes: true,
-                    // preventNonNodes: true,
-                    // preventRecursiveMoves: true, // Prevent dropping nodes on own descendants
-                    // preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
-                    // scroll: true,
-                    // scrollSpeed: 7,
-                    // scrollSensitivity: 10,
-
-                    // --- Drag-support:
-
                     dragStart: function (node, data) {
-                        /* This function MUST be defined to enable dragging for the tree.
-                         *
-                         * Return false to cancel dragging of node.
-                         * data.dataTransfer.setData() and .setDragImage() is available
-                         * here.
-                         */
-                        //          data.dataTransfer.setDragImage($("<div>hurz</div>").appendTo("body")[0], -10, -10);
                         return true;
                     },
                     dragDrag: function (node, data) {
                         data.dataTransfer.dropEffect = "move";
                     },
                     dragEnd: function (node, data) {},
-
-                    // --- Drop-support:
-
                     dragEnter: function (node, data) {
                         // node.debug("dragEnter", data);
                         data.dataTransfer.dropEffect = "move";
@@ -149,13 +142,17 @@
                         node.setExpanded();
                     }
                 },
+                childcounter: {
+                    deep: true,
+                    hideZeros: true,
+                    hideExpanded: true
+                },
                 activate: function (event, data) {
                     //        alert("activate " + data.node);
                 },
-                lazyLoad: function (event, data) {
-                    data.result = {
-                        url: "ajax-sub2.json"
-                    }
+                loadChildren: function (event, data) {
+                    // update node and parent counters after lazy loading
+                    data.node.updateCounters();
                 },
                 edit: {
                     triggerStart: ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
@@ -199,21 +196,173 @@
                             $(data.node.span).addClass("pending");
                         }
                     }
+                },
+                quicksearch: true,
+                filter: {
+                    autoApply: true, // Re-apply last filter if lazy data is loaded
+                    autoExpand: false, // Expand all branches that contain matches while filtered
+                    counter: true, // Show a badge with number of matching child nodes near parent icons
+                    fuzzy: false, // Match single characters in order, e.g. 'fb' will match 'FooBar'
+                    hideExpandedCounter: true, // Hide counter badge if parent is expanded
+                    hideExpanders: false, // Hide expanders if all child nodes are hidden by filter
+                    highlight: true, // Highlight matches by wrapping inside <mark> tags
+                    leavesOnly: false, // Match end nodes only
+                    nodata: true, // Display a 'no data' status node if result is empty
+                    mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
                 }
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
         });
+
+        var tree = $("#tree").fancytree("getTree");
+
+        /*
+         * Event handlers for our little demo interface
+         */
+        $("input[name=search]").keyup(function (e) {
+            var n,
+                tree = $.ui.fancytree.getTree(),
+                args = "autoApply autoExpand fuzzy hideExpanders highlight leavesOnly nodata".split(" "),
+                opts = {},
+                filterFunc = $("#branchMode").is(":checked") ? tree.filterBranches : tree.filterNodes,
+                match = $(this).val();
+
+            $.each(args, function (i, o) {
+                opts[o] = $("#" + o).is(":checked");
+            });
+            opts.mode = $("#hideMode").is(":checked") ? "hide" : "dimm";
+
+            if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
+                $("button#btnResetSearch").click();
+                return;
+            }
+            if ($("#regex").is(":checked")) {
+                // Pass function to perform match
+                n = filterFunc.call(tree, function (node) {
+                    return new RegExp(match, "i").test(node.title);
+                }, opts);
+            } else {
+                // Pass a string to perform case insensitive matching
+                n = filterFunc.call(tree, match, opts);
+            }
+            $("button#btnResetSearch").attr("disabled", false);
+            $("span#matches").text("(" + n + " matches)");
+        }).focus();
+
+        $("button#btnResetSearch").click(function (e) {
+            $("input[name=search]").val("");
+            $("span#matches").text("");
+            tree.clearFilter();
+        }).attr("disabled", true);
+
+        $("fieldset input:checkbox").change(function (e) {
+            var id = $(this).attr("id"),
+                flag = $(this).is(":checked");
+
+            // Some options can only be set with general filter options (not method args):
+            switch (id) {
+                case "counter":
+                case "hideExpandedCounter":
+                    tree.options.filter[id] = flag;
+                    break;
+            }
+            tree.clearFilter();
+            $("input[name=search]").keyup();
+        });
+
+        function makeCode() {
+            alert("Make Code" + "\r\n" + tree.rootNode);
+        }
     </script>
 </head>
 
 <body>
     <div id="container">
         <div id="tree_wrapper">
-            <button onclick="makeCode()">Tree > Code</button>
+            <div id="button_wrapper">
+                <button onclick="makeCode()">Tree > Code</button>
+            </div>
+            <div>
+                <label for="skinswitcher">Skin:</label>
+                <select id="skinswitcher"></select>
+            </div>
+            <div id="filter_wrapper">
+                <p>
+                    <label>Filter:</label>
+                    <input name="search" placeholder="Filter..." autocomplete="off">
+                    <button id="btnResetSearch" disabled="disabled">×</button>
+                    <span id="matches"></span>
+                </p>
+            </div>
+            <div id="sample_wrapper">
+                <fieldset>
+                    <legend>Options</legend>
+                    <label for="regex">
+                        <input id="regex" type="checkbox"> Regular expression
+                    </label>
+                    <br>
+                    <label for="hideMode">
+                        <input id="hideMode" type="checkbox"> Hide unmatched nodes
+                    </label>
+                    <label for="autoExpand">
+                        <input id="autoExpand" checked="checked" type="checkbox"> Auto expand
+                    </label>
+                    <label for="branchMode">
+                        <input id="branchMode" type="checkbox"> Match whole branch
+                    </label>
+                    <label for="leavesOnly">
+                        <input id="leavesOnly" type="checkbox"> Match end nodes only
+                    </label>
+                    <br>
+                    <label for="fuzzy">
+                        <input id="fuzzy" type="checkbox"> Fuzzy
+                    </label>
+                    <label for="hideExpanders">
+                        <input id="hideExpanders" type="checkbox"> hideExpanders
+                    </label>
+                    <label for="highlight">
+                        <input id="highlight" checked="checked" type="checkbox"> Highlight
+                    </label>
+                    <label for="nodata">
+                        <input id="nodata" checked="checked" type="checkbox"> nodata
+                    </label>
+                    <br>
+                    <label for="counter">
+                        <input id="counter" checked="checked" type="checkbox"> Add counter badges
+                    </label>
+                    <label for="hideExpandedCounter">
+                        <input id="hideExpandedCounter" checked="checked" type="checkbox"> hideExpandedCounter
+                    </label>
+                </fieldset>
+                <p id="sampleButtons">
+                    <span class="sampleButtonContainer">
+                        <button>Filter active branch</button>
+                        <a href="#" class="showCode">Source code</a>
+                        <pre class="prettyprint" style="display: none;">
+                            if( !tree.getActiveNode() ) {
+                              alert("Please activate a folder.");
+                              return;
+                            }
+                            tree.filterBranches(function(node){
+                              return node.isActive();
+                            });
+                          </pre>
+                    </span>
+                    <span class="sampleButtonContainer">
+                        <button>Reset filter</button>
+                        <a href="#" class="showCode">Source code</a>
+                        <pre class="prettyprint" style="display: none;">
+                            tree.clearFilter();
+                          </pre>
+                    </span>
+                </p>
+            </div>
             <div id="tree"> </div>
         </div>
         <div id="code_wrapper">
-            <button class="" onclick="updateTree()">Tree &lt; Code</button>
+            <div class="button_wrapper">
+                <button class="" onclick="updateTree()">Tree &lt; Code</button>
+            </div>
             <div id="code">
                 <textarea>Code Content</textarea>
             </div>
