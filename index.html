@@ -19,41 +19,6 @@
     <script src="assets/fancytree/src/jquery.fancytree.childcounter.js"></script>
 
 
-    <style type="text/css">
-        span.drag-source {
-            border: 1px solid grey;
-            border-radius: 3px;
-            padding: 2px;
-            background-color: silver
-        }
-
-        ul.fancytree-container {
-            max-height: 200px;
-            overflow-y: scroll;
-        }
-
-        span.fancytree-node.fancytree-drag-source {
-            outline: 1px dotted grey;
-        }
-
-        /*
-        span.fancytree-node.fancytree-drag-source.fancytree-drag-remove {
-          opacity: 0.4;
-        }
-        span.fancytree-node.fancytree-drop-over {
-          outline: 1px solid gray;
-        }
-      */
-
-        span.fancytree-node.fancytree-drop-accept {
-            outline: 1px dotted green;
-        }
-
-        span.fancytree-node.fancytree-drop-reject {
-            outline: 1px dotted red;
-        }
-    </style>
-
     <!-- Initialize the tree when page is loaded -->
     <script type="text/javascript">
         $(function () { // on page load
@@ -271,8 +236,61 @@
         });
 
         function makeCode() {
-            var node = $("#tree").fancytree("getRootNode");
-            alert("Make Code" + "\r\n" + node);
+            var tree = $("#tree").fancytree("getTree");
+            var treeCode = tree.toDict(true);
+
+            var toc = "";
+
+            $.each(treeCode, function (key, val) {
+                recursiveFunction(key, val)
+            });
+
+            var tmpExpand = "";
+
+            function recursiveFunction(key, val, depth = 0, tmpStr = "") {
+                var root = (key == "title" && val == "root");
+                if (!root) {
+                    if (key == "title" || tmpStr != "") toc += addIndents(depth);
+                    switch (val instanceof Object) {
+                        case (true):
+                            if (key == "children" && toc != "") {
+                                if (tmpExpand != undefined) {
+                                    console.log(depth + " " + key)
+                                    toc += tmpExpand;
+                                }
+                                tmpExpand = "";
+                                if (depth > 0) toc += addIndents(depth);
+                                toc += "  items:\r\n";
+                            }
+                            break;
+                        default:
+                            if (key == "title") {
+                                toc += "- name : " + val + "\r\n";
+                            }
+                            if (key == "expanded" && toc != "" && val == true) {
+                                tmpExpand = addIndents(depth + 1) + "expanded: " + val + "\r\n";
+                            }
+                            break;
+                    }
+                }
+                var value = val;
+                if (value instanceof Object) {
+                    if (key == "children" && toc != "") depth++;
+                    $.each(value, function (key, val) {
+                        recursiveFunction(key, val, depth, tmpStr)
+                    });
+                }
+            }
+
+            function addIndents(count) {
+                strOut = "";
+                for (var i = 0; i < count; i++) strOut += "  ";
+                return strOut;
+            }
+
+            document.getElementById("code_text").value = toc + "\r\n\r\n--- END ---\r\n\r\n" + JSON.stringify(treeCode,
+                null, 4);
+            //console.log(JSON.stringify(treeCode, null, 4));
         }
     </script>
 </head>
@@ -283,7 +301,7 @@
             <div id="button_wrapper">
                 <button onclick="makeCode()">Tree > Code</button>
             </div>
-            <div>
+            <div style="display: none;">
                 <label for="skinswitcher">Skin:</label>
                 <select id="skinswitcher"></select>
             </div>
@@ -295,7 +313,7 @@
                     <span id="matches"></span>
                 </p>
             </div>
-            <div id="sample_wrapper">
+            <div id="sample_wrapper" style="display: none;">
                 <fieldset>
                     <legend>Options</legend>
                     <label for="regex">
@@ -365,7 +383,7 @@
                 <button class="" onclick="updateTree()">Tree &lt; Code</button>
             </div>
             <div id="code">
-                <textarea>Code Content</textarea>
+                <textarea id="code_text" placeholder="dmc table of contents code">Code Content</textarea>
             </div>
         </div>
         <div style="float: none;" />
