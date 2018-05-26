@@ -18,7 +18,6 @@
     <script src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
     <script src="assets/fancytree/src/jquery.fancytree.childcounter.js"></script>
 
-
     <!-- Initialize the tree when page is loaded -->
     <script type="text/javascript">
         $(function () { // on page load
@@ -288,8 +287,8 @@
                 return strOut;
             }
 
-            document.getElementById("code_text").value = toc + "\r\n\r\n--- END ---\r\n\r\n" + JSON.stringify(treeCode,
-                null, 4);
+            document.getElementById("code_text").value = toc
+            //document.getElementById("code_text").value = toc + "\r\n\r\n--- END ---\r\n\r\n" + JSON.stringify(treeCode, null, 4);
             //console.log(JSON.stringify(treeCode, null, 4));
         }
     </script>
