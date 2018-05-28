@@ -17,6 +17,7 @@
     <script src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
     <script src="assets/fancytree/src/jquery.fancytree.edit.js"></script>
     <script src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
+    <script src="assets/fancytree/src/jquery.fancytree.wide.js"></script>
 
     <!-- Initialize the tree when page is loaded -->
     <script type="text/javascript">
@@ -123,7 +124,7 @@
                         }
                     }
                 },
-                extensions: ["childcounter", "dnd5", "edit", "filter"],
+                extensions: ["childcounter", "dnd5", "edit", "filter", "wide"],
                 icon: true,
                 quicksearch: true,
                 selectMode: 2,
@@ -166,6 +167,12 @@
                     leavesOnly: false, // Match end nodes only
                     nodata: true, // Display a 'no data' status node if result is empty
                     mode: "dimm" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
+                },
+                wide: {
+                    // iconWidth: "32px",     // Adjust this if @fancy-icon-width != "16px"
+                    // iconSpacing: "6px", // Adjust this if @fancy-icon-spacing != "3px"
+                    // labelSpacing: "6px",   // Adjust this if padding between icon and label !=  "3px"
+                    // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
                     $("#statusLine").text(event.type + ": " + data.node);
@@ -260,7 +267,7 @@
                 <button id="add_node" onclick="add_child();">Add Node</button>
                 <button id="toggle_folder" onclick="toggle_folder();">Toggle Folder</button>
             </div>
-            <div id="tree"> </div>
+            <div id="tree" style="resize: both;"> </div>
             <div id="debug">
                 <div id="debug_title" style="padding-top: 20px;">
                     <B>DEBUG:</B>
