@@ -178,7 +178,7 @@
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
 
             var tree = $("#tree").fancytree("getTree");
-            
+
             $("input[name=search]").keyup(function (e) {
                 var n,
                     tree = $.ui.fancytree.getTree(),
@@ -218,7 +218,7 @@
             }).focus();
 
             $("button#btnResetSearch").click(function (e) {
-                $("input[name=search]").val("test");
+                $("input[name=search]").val("");
                 $("span#matches").text("");
                 tree.clearFilter();
             }).attr("disabled", true);
