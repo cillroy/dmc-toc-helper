@@ -81,13 +81,17 @@ function add_folder() {
             folder: true
         });
     }
+    node.folder = true;
 }
 
 function toggle_folder() {
     var node = $("#tree").fancytree("getActiveNode");
-    // NEED TO CATCH WHEN A NODE IS NOT SELECTED
+    if (node) {
     node.folder = (node.folder) ? false : true;
     node.render();
+    } else {
+        alert("No Node Selected!");
+    }
 }
 
 function resetSearch() {
