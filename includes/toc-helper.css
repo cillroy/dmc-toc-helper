@@ -6,7 +6,7 @@ span.drag-source {
 }
 
 ul.fancytree-container {
-    max-height: 200px;
+    max-height: 200px; 
     overflow-y: scroll;
 }
 
@@ -46,6 +46,10 @@ span.fancytree-node.fancytree-drop-reject {
 
 #code {
     width: 100%;
+}
+
+#tree {
+    max-height: 80%;
 }
 
 .button_wrapper {

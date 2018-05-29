@@ -58,6 +58,8 @@ function makeCode() {
 
 function updateTree() {
     alert("Update Tree");
+    var tree = $("#tree").fancytree("getTree");
+    tree.source = document.getElementById("code_text").value;
 }
 
 function add_child() {
@@ -87,8 +89,8 @@ function add_folder() {
 function toggle_folder() {
     var node = $("#tree").fancytree("getActiveNode");
     if (node) {
-    node.folder = (node.folder) ? false : true;
-    node.render();
+        node.folder = (node.folder) ? false : true;
+        node.render();
     } else {
         alert("No Node Selected!");
     }
@@ -97,4 +99,24 @@ function toggle_folder() {
 function resetSearch() {
     var tree = $("#tree").fancytree("getTree");
     tree.clearFilter;
+}
+
+function sortBranch() {
+    var node = $("#tree").fancytree("getActiveNode");
+    if (node) {
+        // Custom compare function (optional) that sorts case insensitive
+        var cmp = function (a, b) {
+            a = a.title.toLowerCase();
+            b = b.title.toLowerCase();
+            return a > b ? 1 : a < b ? -1 : 0;
+        };
+        node.sortChildren(cmp, false);
+    } else {
+        alert("No Node Selected!");
+    }
+}
+
+function sortTree() {
+    var node = $("#tree").fancytree("getRootNode");
+    node.sortChildren(null, true);
 }

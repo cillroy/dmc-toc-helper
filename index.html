@@ -110,7 +110,7 @@
                             $(data.node.span).removeClass("pending");
                             // Let's pretend the server returned a slightly modified
                             // title:
-                            data.node.setTitle(data.node.title + "!");
+                            data.node.setTitle(data.node.title);
                         }, 2000);
                         // We return true, so ext-edit will set the current user input
                         // as title
@@ -266,6 +266,8 @@
                 <button id="add_folder" onclick="add_folder();">Add Folder</button>
                 <button id="add_node" onclick="add_child();">Add Node</button>
                 <button id="toggle_folder" onclick="toggle_folder();">Toggle Folder</button>
+                <button id="sort_tree" onclick="sortTree();">Sort Tree</button>
+                <button id="sort_branch" onclick="sortBranch();">Sort Branch</button>
             </div>
             <div id="tree" style="resize: both;"> </div>
             <div id="debug">
