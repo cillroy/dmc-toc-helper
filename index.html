@@ -130,29 +130,35 @@
                 selectMode: 2,
                 source: [{
                         title: "Node 1",
-                        key: "1"
+                        key: "1",
+                        href: ""
                     },
                     {
                         title: "Folder 2",
                         key: "2",
+                        href: "",
                         folder: true,
                         children: [{
                                 title: "Node 2.1",
-                                key: "3"
+                                key: "3",
+                                href: ""
                             },
                             {
                                 title: "Node 2.2",
-                                key: "4"
+                                key: "4",
+                                href: ""
                             }
                         ]
                     },
                     {
                         title: "Folder 3",
                         key: "5",
+                        href: "",
                         folder: true,
                         children: [{
                             title: "Node 3.1",
-                            key: "6"
+                            key: "6",
+                            href: ""
                         }]
                     }
                 ],
@@ -176,6 +182,11 @@
                 },
                 activate: function (event, data) {
                     $("#statusLine").text(event.type + ": " + data.node);
+                    /*
+                    var tree = $("#tree").fancytree("getActiveNode")
+                    $("#nodeTitle").text(tree.href);
+                    $("#nodeHref").text(data.node);
+                    */
                 },
                 loadChildren: function (event, data) {
                     // update node and parent counters after lazy loading
@@ -268,6 +279,12 @@
                 <button id="toggle_folder" onclick="toggle_folder();">Toggle Folder</button>
                 <button id="sort_tree" onclick="sortTree();">Sort Tree</button>
                 <button id="sort_branch" onclick="sortBranch();">Sort Branch</button>
+            </div>
+            <div id="edit">
+                <label>Node Title</label>
+                <input type="text" id="nodeTitle" />
+                <label>Node href</label>
+                <input type="text" id="nodeHref" />
             </div>
             <div id="tree" style="resize: both;"> </div>
             <div id="debug">

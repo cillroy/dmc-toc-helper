@@ -30,8 +30,11 @@ function makeCode() {
                     if (key == "title") {
                         toc += "- name : " + val + "\r\n";
                     }
+                    if (key == "href") {
+                        toc += "  href : " + val + "\r\n";
+                    }
                     if (key == "expanded" && toc != "" && val == true) {
-                        tmpExpand = addIndents(depth + 1) + "expanded: " + val + "\r\n";
+                        tmpExpand = addIndents(depth) + "  expanded: " + val + "\r\n";
                     }
                     break;
             }
@@ -66,7 +69,8 @@ function add_child() {
     var node = $("#tree").fancytree("getActiveNode");
     if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
     node.folder = true;
-    node.editCreateNode("child", "Node title");
+    var newNode = node.editCreateNode("child", "Node title");
+    newNode.href = "";
 }
 
 function add_folder() {
@@ -75,12 +79,14 @@ function add_folder() {
         node = $("#tree").fancytree("getRootNode");
         node.addChildren({
             title: "Node title",
-            folder: true
+            folder: true,
+            href: ""
         });
     } else {
         node.editCreateNode("child", {
             title: "Node title",
-            folder: true
+            folder: true,
+            href: ""
         });
     }
     node.folder = true;
