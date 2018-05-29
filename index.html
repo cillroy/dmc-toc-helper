@@ -182,11 +182,9 @@
                 },
                 activate: function (event, data) {
                     $("#statusLine").text(event.type + ": " + data.node);
-                    /*
-                    var tree = $("#tree").fancytree("getActiveNode")
-                    $("#nodeTitle").text(tree.href);
-                    $("#nodeHref").text(data.node);
-                    */
+                    //var tree = $("#tree").fancytree("getActiveNode")
+                    $("#nodeTitle").val(data.node['title']);
+                    $("#nodeHref").val(data.node);
                 },
                 loadChildren: function (event, data) {
                     // update node and parent counters after lazy loading
@@ -282,9 +280,9 @@
             </div>
             <div id="edit">
                 <label>Node Title</label>
-                <input type="text" id="nodeTitle" />
+                <input type="text" id="nodeTitle" class="editNode" />
                 <label>Node href</label>
-                <input type="text" id="nodeHref" />
+                <input type="text" id="nodeHref" class="editNode" />
             </div>
             <div id="tree" style="resize: both;"> </div>
             <div id="debug">

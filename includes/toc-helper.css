@@ -61,3 +61,7 @@ span.fancytree-node.fancytree-drop-reject {
     width: 100%;
     height: 80%;
 }
+
+.editNode {
+    width: auto;
+}
