@@ -63,7 +63,7 @@ $(function () {
         var toc = "";
 
         $.each(treeCode, function (key, val) {
-            recursiveFunction(key, val)
+            recursiveFunction(key, val);
         });
 
         var tmpExpand = "";
@@ -100,7 +100,7 @@ $(function () {
             if (value instanceof Object) {
                 if (key == "children" && toc != "") depth++;
                 $.each(value, function (key, val) {
-                    recursiveFunction(key, val, depth, tmpStr)
+                    recursiveFunction(key, val, depth, tmpStr);
                 });
             }
         }
