@@ -6,7 +6,7 @@ span.drag-source {
 }
 
 ul.fancytree-container {
-    max-height: 200px; 
+    max-height: 200px;
     overflow-y: scroll;
 }
 
@@ -14,14 +14,12 @@ span.fancytree-node.fancytree-drag-source {
     outline: 1px dotted grey;
 }
 
-/*
 span.fancytree-node.fancytree-drag-source.fancytree-drag-remove {
   opacity: 0.4;
 }
 span.fancytree-node.fancytree-drop-over {
   outline: 1px solid gray;
 }
-*/
 
 span.fancytree-node.fancytree-drop-accept {
     outline: 1px dotted green;
@@ -37,8 +35,8 @@ span.fancytree-node.fancytree-drop-reject {
     width: 90%;
 }
 
-#tree_wrapper,
-#code_wrapper {
+#treeWrapper,
+#codeWrapper {
     float: left;
     padding: 20px;
     width: 45%;
@@ -48,20 +46,20 @@ span.fancytree-node.fancytree-drop-reject {
     width: 100%;
 }
 
-#tree {
-    max-height: 80%;
-}
-
-.button_wrapper {
+.buttonWrapper {
     align-content: center;
     text-align: center;
 }
 
-#code_text {
+#codeText {
     width: 100%;
     height: 80%;
 }
 
 .editNode {
     width: auto;
+}
+
+#statusLine {
+    white-space: pre-wrap;
 }

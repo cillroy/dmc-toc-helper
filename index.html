@@ -5,23 +5,27 @@
     <meta content="utf-8" http-equiv="encoding">
 
     <title>docs.microsoft.com Table of Content Helper - PoC</title>
-    <script type="text/javascript" src="includes/toc-helper.js"></script>
-    <link rel="stylesheet" type="text/css" href="includes/toc-helper.css" />
 
-    <script src="assets/fancytree/lib/jquery.js"></script>
+    <!-- jQuery setup-->
+    <script type="text/javascript" src="assets/fancytree/lib/jquery.js"></script>
 
+    <!-- FancyTree setup-->
     <link href="assets/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">
-    <script src="assets/fancytree/src/jquery-ui-dependencies/jquery.fancytree.ui-deps.js"></script>
-    <script src="assets/fancytree/src/jquery.fancytree.js"></script>
-    <script src="assets/fancytree/src/jquery.fancytree.childcounter.js"></script>
-    <script src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
-    <script src="assets/fancytree/src/jquery.fancytree.edit.js"></script>
-    <script src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
-    <script src="assets/fancytree/src/jquery.fancytree.wide.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery-ui-dependencies/jquery.fancytree.ui-deps.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.childcounter.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.edit.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
+    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.wide.js"></script>
+
+    <!-- dmc Includes -->
+    <link rel="stylesheet" type="text/css" href="includes/toc-helper.css" />
+    <script type="text/javascript" src="includes/toc-helper.js"></script>
 
     <!-- Initialize the tree when page is loaded -->
     <script type="text/javascript">
-        $(function () { // on page load
+        $(function () {
             // Create the tree inside the <div id="tree"> element.
             $("#tree").fancytree({
                 childcounter: {
@@ -54,7 +58,7 @@
                          */
                         var transfer = data.dataTransfer;
 
-                        node.debug("drop", data);
+                        //node.debug("drop", data);
 
                         // alert("Drop on " + node + ":\n"
                         //   + "source:" + JSON.stringify(data.otherNodeData) + "\n"
@@ -68,6 +72,7 @@
                             var sameTree = (data.otherNode.tree === data.tree);
 
                             data.otherNode.moveTo(node, data.hitMode);
+                            node.folder = true;
                         } else if (data.otherNodeData) {
                             // Drop Fancytree node from different frame or window, so we only have
                             // JSON representation available
@@ -79,49 +84,6 @@
                             }, data.hitMode);
                         }
                         node.setExpanded();
-                    }
-                },
-                edit: {
-                    triggerStart: ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
-                    beforeEdit: function (event, data) {
-                        // Return false to prevent edit mode
-                    },
-                    edit: function (event, data) {
-                        // Editor was opened (available as data.input)
-                    },
-                    beforeClose: function (event, data) {
-                        // Return false to prevent cancel/save (data.input is available)
-                        console.log(event.type, event, data);
-                        if (data.originalEvent.type === "mousedown") {
-                            // We could prevent the mouse click from generating a blur event
-                            // (which would then again close the editor) and return `false` to keep
-                            // the editor open:
-                            //                  data.originalEvent.preventDefault();
-                            //                  return false;
-                            // Or go on with closing the editor, but discard any changes:
-                            //                  data.save = false;
-                        }
-                    },
-                    save: function (event, data) {
-                        // Save data.input.val() or return false to keep editor open
-                        console.log("save...", this, data);
-                        // Simulate to start a slow ajax request...
-                        setTimeout(function () {
-                            $(data.node.span).removeClass("pending");
-                            // Let's pretend the server returned a slightly modified
-                            // title:
-                            data.node.setTitle(data.node.title);
-                        }, 2000);
-                        // We return true, so ext-edit will set the current user input
-                        // as title
-                        return true;
-                    },
-                    close: function (event, data) {
-                        // Editor was removed
-                        if (data.save) {
-                            // Since we started an async request, mark the node as preliminary
-                            $(data.node.span).addClass("pending");
-                        }
                     }
                 },
                 extensions: ["childcounter", "dnd5", "filter", "wide"],
@@ -181,9 +143,9 @@
                     // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
-                    $("#statusLine").text(event.type + ": " + data.node);
+                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node + "\r\ndata.node.data['href']: " + data.node.data['href'] + "\r\ndata.node['expanded']:" + data.node['expanded']);
                     $("#nodeTitle").val(data.node['title']);
-                    $("#nodeHref").val(data.node['href']);
+                    $("#nodeHref").val(data.node.data['href']);
                     $("#updateNode").attr("disabled", false);
                 },
                 loadChildren: function (event, data) {
@@ -194,117 +156,49 @@
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
 
             var tree = $("#tree").fancytree("getTree");
-
-            $("input[name=search]").keyup(function (e) {
-                var n,
-                    tree = $.ui.fancytree.getTree(),
-                    args = "autoApply autoExpand fuzzy hideExpanders highlight leavesOnly nodata".split(
-                        " "),
-                    opts = {},
-                    filterFunc = $("#branchMode").is(":checked") ? tree.filterBranches : tree.filterNodes,
-                    match = $(this).val();
-
-                /*
-                $.each(args, function (i, o) {
-                    opts[o] = $("#" + o).is(":checked");
-                });
-                */
-
-                /*
-                opts.mode = $("#hideMode").is(":checked") ? "hide" : "dimm";
-                */
-
-                if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
-                    $("button#btnResetSearch").click();
-                    return;
-                }
-
-                if ($("#regex").is(":checked")) {
-                    // Pass function to perform match
-                    n = filterFunc.call(tree, function (node) {
-                        return new RegExp(match, "i").test(node.title);
-                    }, opts);
-                } else {
-                    // Pass a string to perform case insensitive matching
-                    n = filterFunc.call(tree, match, opts);
-                }
-
-                $("button#btnResetSearch").attr("disabled", false);
-                $("span#matches").text("(" + n + " matches)");
-            }).focus();
-
-            $("button#btnResetSearch").click(function (e) {
-                $("input[name=search]").val("");
-                $("span#matches").text("");
-                tree.clearFilter();
-            }).attr("disabled", true);
-
-            /*
-            $("fieldset input:checkbox").change(function (e) {
-                var id = $(this).attr("id"),
-                    flag = $(this).is(":checked");
-
-                // Some options can only be set with general filter options (not method args):
-                switch (id) {
-                    case "counter":
-                    case "hideExpandedCounter":
-                        tree.options.filter[id] = flag;
-                        break;
-                }
-                tree.clearFilter();
-                $("input[name=search]").keyup();
-            });
-            */
-
-            $("button#updateNode").click(function (e) {
-                var node = $("#tree").fancytree("getActiveNode");
-                node.title = $("#nodeTitle").val();
-                node.data['href'] = $("input[name=nodeHref]").val();
-                node.renderTitle();
-            }).attr("disabled", true);;
         });
     </script>
 </head>
 
 <body>
     <div id="container">
-        <div id="tree_wrapper">
-            <div id="button_wrapper">
-                <button id="btn_makeCode" onclick="makeCode();">Tree > Code</button>
+        <div id="treeWrapper">
+            <div id="buttonWrapper">
+                <button id="makeCode">Tree > Code</button>
             </div>
-            <div id="filter_wrapper">
+            <div id="filterWrapper">
                 <label>Filter:</label>
                 <input name="search" placeholder="Filter..." autocomplete="off">
-                <button id="btnResetSearch">&times;</button>
+                <button id="resetSearch" disabled="true">&times;</button>
                 <span id="matches"></span>
             </div>
             <div id="add">
-                <button id="sort_tree" onclick="sortTree();">Sort Tree</button>
-                <button id="sort_branch" onclick="sortBranch();">Sort Branch</button>
+                <button id="sortTree">Sort Tree</button>
+                <button id="sortBranch">Sort Branch</button>
             </div>
             <div id="edit">
                 <label>Node Title</label>
                 <input type="text" id="nodeTitle" class="editNode" />
                 <label>Node href</label>
                 <input type="text" id="nodeHref" class="editNode" />
-                <button id="add_node" onclick="add_child();">Add Node</button>
+                <button id="addNode">Add Node</button>
                 <button id="updateNode">Update Node</button>
-                <button id="toggle_folder" onclick="toggle_folder();">Toggle Folder/Node</button>
+                <button id="toggleFolder">Toggle Folder/Node</button>
             </div>
-            <div id="tree" style="resize: both;"> </div>
+            <div id="tree"></div>
             <div id="debug">
-                <div id="debug_title" style="padding-top: 20px;">
-                    <B>DEBUG:</B>
+                <div id="debugTitle" style="padding-top: 20px;">
+                    <b>DEBUG:</b>
                 </div>
                 <div id="statusLine" style="padding: 20px; background-color: lightgrey"></div>
             </div>
         </div>
-        <div id="code_wrapper">
-            <div class="button_wrapper">
-                <button class="" onclick="updateTree()">Tree &lt; Code</button>
+        <div id="codeWrapper">
+            <div class="buttonWrapper">
+                <button class="" id=makeTree>Tree &lt; Code</button>
             </div>
             <div id="code">
-                <textarea id="code_text" placeholder="docs.microsoft.com table of contents code goes here..."></textarea>
+                <textarea id="codeText" placeholder="docs.microsoft.com table of contents code goes here..."></textarea>
             </div>
         </div>
         <div style="float: none;" />
