@@ -1,3 +1,5 @@
+var missingNodeMsg = "No node selected!\r\nPlease select a node and try again."
+
 function makeCode() {
     var tree = $("#tree").fancytree("getTree");
     var treeCode = tree.toDict(true);
@@ -18,7 +20,6 @@ function makeCode() {
                 case (true):
                     if (key == "children" && toc != "") {
                         if (tmpExpand != undefined) {
-                            console.log(depth + " " + key)
                             toc += tmpExpand;
                         }
                         tmpExpand = "";
@@ -31,7 +32,7 @@ function makeCode() {
                         toc += "- name : " + val + "\r\n";
                     }
                     if (key == "href") {
-                        toc += "  href : " + val + "\r\n";
+                        toc += addIndents(depth) + "  href : " + val + "\r\n";
                     }
                     if (key == "expanded" && toc != "" && val == true) {
                         tmpExpand = addIndents(depth) + "  expanded: " + val + "\r\n";
@@ -69,27 +70,11 @@ function add_child() {
     var node = $("#tree").fancytree("getActiveNode");
     if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
     node.folder = true;
-    var newNode = node.editCreateNode("child", "Node title");
-    newNode.href = "";
-}
-
-function add_folder() {
-    var node = $("#tree").fancytree("getActiveNode");
-    if (!node || node === "undefined") {
-        node = $("#tree").fancytree("getRootNode");
-        node.addChildren({
-            title: "Node title",
-            folder: true,
-            href: ""
-        });
-    } else {
-        node.editCreateNode("child", {
-            title: "Node title",
-            folder: true,
-            href: ""
-        });
-    }
-    node.folder = true;
+    var newNode = node.editCreateNode("child", {
+        title: $("#nodeTitle").val(),
+        href: $("#nodeHref").val()
+    });
+    node.render();
 }
 
 function toggle_folder() {
@@ -98,7 +83,7 @@ function toggle_folder() {
         node.folder = (node.folder) ? false : true;
         node.render();
     } else {
-        alert("No Node Selected!");
+        alert(missingNodeMsg);
     }
 }
 
@@ -118,7 +103,7 @@ function sortBranch() {
         };
         node.sortChildren(cmp, false);
     } else {
-        alert("No Node Selected!");
+        alert(missingNodeMsg);
     }
 }
 

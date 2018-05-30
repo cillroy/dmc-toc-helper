@@ -124,41 +124,41 @@
                         }
                     }
                 },
-                extensions: ["childcounter", "dnd5", "edit", "filter", "wide"],
+                extensions: ["childcounter", "dnd5", "filter", "wide"],
                 icon: true,
                 quicksearch: true,
                 selectMode: 2,
                 source: [{
                         title: "Node 1",
                         key: "1",
-                        href: ""
+                        href: "12"
                     },
                     {
                         title: "Folder 2",
                         key: "2",
-                        href: "",
+                        href: "22",
                         folder: true,
                         children: [{
                                 title: "Node 2.1",
                                 key: "3",
-                                href: ""
+                                href: "32"
                             },
                             {
                                 title: "Node 2.2",
                                 key: "4",
-                                href: ""
+                                href: "42"
                             }
                         ]
                     },
                     {
                         title: "Folder 3",
                         key: "5",
-                        href: "",
+                        href: "52",
                         folder: true,
                         children: [{
                             title: "Node 3.1",
                             key: "6",
-                            href: ""
+                            href: "62"
                         }]
                     }
                 ],
@@ -182,9 +182,9 @@
                 },
                 activate: function (event, data) {
                     $("#statusLine").text(event.type + ": " + data.node);
-                    //var tree = $("#tree").fancytree("getActiveNode")
                     $("#nodeTitle").val(data.node['title']);
-                    $("#nodeHref").val(data.node);
+                    $("#nodeHref").val(data.node['href']);
+                    $("#updateNode").attr("disabled", false);
                 },
                 loadChildren: function (event, data) {
                     // update node and parent counters after lazy loading
@@ -255,6 +255,13 @@
                 $("input[name=search]").keyup();
             });
             */
+
+            $("button#updateNode").click(function (e) {
+                var node = $("#tree").fancytree("getActiveNode");
+                node.title = $("#nodeTitle").val();
+                node.data['href'] = $("input[name=nodeHref]").val();
+                node.renderTitle();
+            }).attr("disabled", true);;
         });
     </script>
 </head>
@@ -272,9 +279,6 @@
                 <span id="matches"></span>
             </div>
             <div id="add">
-                <button id="add_folder" onclick="add_folder();">Add Folder</button>
-                <button id="add_node" onclick="add_child();">Add Node</button>
-                <button id="toggle_folder" onclick="toggle_folder();">Toggle Folder</button>
                 <button id="sort_tree" onclick="sortTree();">Sort Tree</button>
                 <button id="sort_branch" onclick="sortBranch();">Sort Branch</button>
             </div>
@@ -283,6 +287,9 @@
                 <input type="text" id="nodeTitle" class="editNode" />
                 <label>Node href</label>
                 <input type="text" id="nodeHref" class="editNode" />
+                <button id="add_node" onclick="add_child();">Add Node</button>
+                <button id="updateNode">Update Node</button>
+                <button id="toggle_folder" onclick="toggle_folder();">Toggle Folder/Node</button>
             </div>
             <div id="tree" style="resize: both;"> </div>
             <div id="debug">
