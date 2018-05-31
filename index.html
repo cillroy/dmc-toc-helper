@@ -93,34 +93,40 @@
                 source: [{
                         title: "Node 1",
                         key: "1",
-                        href: "12"
+                        href: "node1.md",
+                        toc: "Node 1"
                     },
                     {
                         title: "Folder 2",
                         key: "2",
-                        href: "22",
+                        href: "node2.md",
+                        toc: "Folder 2",
                         folder: true,
                         children: [{
                                 title: "Node 2.1",
                                 key: "3",
-                                href: "32"
+                                href: "node2.1.md",
+                                toc: "Node 2.1"
                             },
                             {
                                 title: "Node 2.2",
                                 key: "4",
-                                href: "42"
+                                href: "node2.2.md",
+                                toc: "Node 2.2"
                             }
                         ]
                     },
                     {
                         title: "Folder 3",
                         key: "5",
-                        href: "52",
+                        href: "node3.md",
+                        toc: "Folder 3",
                         folder: true,
                         children: [{
                             title: "Node 3.1",
                             key: "6",
-                            href: "62"
+                            href: "node3.1.md",
+                            toc: "Node 3.1"
                         }]
                     }
                 ],
@@ -143,14 +149,17 @@
                     // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node + "\r\ndata.node.data['href']: " + data.node.data['href'] + "\r\ndata.node['expanded']:" + data.node['expanded']);
-                    $("#nodeTitle").val(data.node['title']);
+                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node + "\r\ndata.node.data['toc']: " + data.node.data['toc'] + "\r\ndata.node.data['href']: " + data.node.data['href'] + "\r\ndata.node['expanded']:" + data.node['expanded']);
+                    $("#nodeTitle").val(data.node.data['toc']);
                     $("#nodeHref").val(data.node.data['href']);
                     $("#updateNode").attr("disabled", false);
                 },
                 loadChildren: function (event, data) {
                     // update node and parent counters after lazy loading
                     data.node.updateCounters();
+                },
+                renderNode: function (event, data) {
+
                 }
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
@@ -175,15 +184,18 @@
             <div id="add">
                 <button id="sortTree">Sort Tree</button>
                 <button id="sortBranch">Sort Branch</button>
+                <input type="checkbox" id="showHref">Show href in title</input>
             </div>
             <div id="edit">
                 <label>Node Title</label>
                 <input type="text" id="nodeTitle" class="editNode" />
                 <label>Node href</label>
                 <input type="text" id="nodeHref" class="editNode" />
-                <button id="addNode">Add Node</button>
                 <button id="updateNode">Update Node</button>
                 <button id="toggleFolder">Toggle Folder/Node</button>
+            </div>
+            <div>
+                <button id="addNode">Add Node</button>
             </div>
             <div id="tree"></div>
             <div id="debug">
