@@ -83,3 +83,10 @@ span.fancytree-node.fancytree-drop-reject {
     padding: 20px;
     background-color: lightgrey
 }
+
+.debugHeader {
+    padding: 5px;
+    border: 1px solid black;
+    text-align: center;
+    background-color: lightseagreen;
+}

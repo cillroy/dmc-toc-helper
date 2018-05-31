@@ -15,7 +15,6 @@
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.js"></script>
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.childcounter.js"></script>
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
-    <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.edit.js"></script>
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.wide.js"></script>
 
@@ -161,7 +160,24 @@
                     // update node and parent counters after lazy loading
                     data.node.updateCounters();
                 },
-                renderNode: function (event, data) {}
+                renderNode: function (event, data) {
+                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
+                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
+                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
+                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                },
+                expand: function (event, data) {
+                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
+                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
+                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
+                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                },
+                collapse: function (event, data) {
+                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
+                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
+                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
+                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                },
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
 
@@ -217,9 +233,9 @@
                 <div id="debugTitle" style="padding-top: 20px;">
                     <b>DEBUG:</b>
                 </div>
-                <div>active node</div>
+                <div class="debugHeader">active node</div>
                 <div id="statusLine"></div>
-                <div>tree&lt;code</div>
+                <div class="debugHeader">tree&lt;code</div>
                 <div id="jsonGenerate"></div>
             </div>
         </div>

@@ -106,6 +106,7 @@ $(function () {
         console.log(JSON.stringify(treeCode, null, 4));
     });
 
+    /* Use node.js to format yaml2json? */
     $("button#makeTree").click(function (e) {
         var treeSourceStart = '{ expanded": true, "key": "root_1", "title": "root", "children": [ {';
         var treeSourceEnd = ']}';
@@ -135,6 +136,7 @@ $(function () {
         treeSourceStart += treeSource + treeSourceEnd;
         treeSource = treeSourceStart;
         $("#jsonGenerate").text(treeSource);
+        $("#jsonGenerate").text($("#codeText").val());
         var tree = $("#tree").fancytree("getTree");
     });
 
@@ -151,6 +153,11 @@ $(function () {
         node.data['toc'] = $("#nodeTitle").val();
         node.title = $("#nodeTitle").val() + titleFormat($("#nodeHref").val());
         node.renderTitle();
+
+        $("#statusLine").text("event.type: " + e.type + "\r\ndata.node: " + node +
+        "\r\ndata.node.data['toc']: " + node.data['toc'] +
+        "\r\ndata.node.data['href']: " + node.data['href'] +
+        "\r\ndata.node['expanded']:" + node['expanded']);
     }).attr("disabled", true);
 
     $("button#sortTree").click(function (e) {
@@ -221,16 +228,17 @@ $(function () {
         var node = $("#tree").fancytree("getActiveNode");
         if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
         node.folder = true;
-        var newNode = node.editCreateNode("child", {
+
+        node.addChildren({
             title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
             href: $("#newNodeHref").val(),
             toc: $("#newNodeTitle").val()
         });
+
+        node.setExpanded();
         node.render();
         //$("#tree").fancytree("getTree").activateKey(node.key);
         $("#newNodeTitle").val("");
         $("#newNodeHref").val("");
-        $("span", "#createNode").text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
-        $("#newNode").toggle();
     });
 });
