@@ -161,9 +161,7 @@
                     // update node and parent counters after lazy loading
                     data.node.updateCounters();
                 },
-                renderNode: function (event, data) {
-
-                }
+                renderNode: function (event, data) {}
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
 
@@ -219,7 +217,10 @@
                 <div id="debugTitle" style="padding-top: 20px;">
                     <b>DEBUG:</b>
                 </div>
-                <div id="statusLine" style="padding: 20px; background-color: lightgrey"></div>
+                <div>active node</div>
+                <div id="statusLine"></div>
+                <div>tree&lt;code</div>
+                <div id="jsonGenerate"></div>
             </div>
         </div>
         <div id="codeWrapper">

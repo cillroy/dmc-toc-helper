@@ -107,7 +107,6 @@ $(function () {
     });
 
     $("button#makeTree").click(function (e) {
-        alert("Update Tree");
         var treeSourceStart = '{ expanded": true, "key": "root_1", "title": "root", "children": [ {';
         var treeSourceEnd = ']}';
         var treeSource = "";
@@ -135,7 +134,7 @@ $(function () {
 
         treeSourceStart += treeSource + treeSourceEnd;
         treeSource = treeSourceStart;
-        console.log(treeSource);
+        $("#jsonGenerate").text(treeSource);
         var tree = $("#tree").fancytree("getTree");
     });
 

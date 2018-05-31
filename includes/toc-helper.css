@@ -4,6 +4,7 @@ span.drag-source {
     padding: 2px;
     background-color: silver
 }
+
 /*
 ul.fancytree-container {
     max-height: 200px;
@@ -75,4 +76,10 @@ span.fancytree-node.fancytree-drop-reject {
 
 #newNode.div {
     padding: 20px;
+}
+
+#statusLine,
+#jsonGenerate {
+    padding: 20px;
+    background-color: lightgrey
 }
