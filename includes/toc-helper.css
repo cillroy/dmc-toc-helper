@@ -63,3 +63,15 @@ span.fancytree-node.fancytree-drop-reject {
 #statusLine {
     white-space: pre-wrap;
 }
+
+#newNode {
+    text-align: center;
+    padding: 20px;
+    background-color: lightgreen;
+    border: 1px solid black;
+    display: none;
+}
+
+#newNode.div {
+    padding: 20px;
+}

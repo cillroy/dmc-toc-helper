@@ -1,6 +1,11 @@
 var missingNodeMsg = "No node selected!\r\nPlease select a node and try again.";
 
 $(function () {
+    function titleFormat(val) {
+        var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
+        return outString;
+    }
+    
     $("input[name=search]").keyup(function (e) {
         var n,
             tree = $.ui.fancytree.getTree(),
@@ -56,7 +61,6 @@ $(function () {
     });
     */
 
-    // Need to update this to use the recursive function from showHref
     $("button#makeCode").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
         var treeCode = tree.toDict(true);
@@ -69,47 +73,20 @@ $(function () {
         var tmpExpand = "";
 
         function recursiveFunction(key, val, depth = 0, tmpStr = "") {
-            /*
-            var root = (key == "title" && val == "root");
-            if (!root) {
-                if (key == "title" || tmpStr != "") toc += addIndents(depth);
-                switch (val instanceof Object) {
-                    case (true):
-                        if (key == "children" && toc != "") {
-                            if (tmpExpand != undefined) {
-                                toc += tmpExpand;
-                            }
-                            tmpExpand = "";
-                            if (depth > 0) toc += addIndents(depth);
-                            toc += "  items:\r\n";
-                        }
-                        break;
-                    default:
-                        if (key == "title") {
-                            toc += "- name : " + val + "\r\n";
-                        }
-                        if (key == "href") {
-                            toc += addIndents(depth) + "  href : " + val + "\r\n";
-                        }
-                        if (key == "expanded" && toc != "" && val == true) {
-                            tmpExpand = addIndents(depth) + "  expanded: " + val + "\r\n";
-                        }
-                        break;
-                }
-            }
-            */
             if (key == "key") {
                 var indent = addIndents(depth);
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
-                toc += indent + "- name:" + node.data['toc'] + "\r\n";
-                if (node.data['href']) toc += toc += indent + "  href:" + node.data['href'] + "\r\n";
-                if (node.expanded) toc += toc += indent + "  expanded:" + node.expanded + "\r\n";
-                if (node.children instanceof Object) toc += indent + "  items:\r\n";
+                if (val != "root_1" && node.title != "root") {
+                    toc += indent + "- name:" + node.data['toc'] + "\r\n";
+                    if (node.data['href']) toc += indent + "  href:" + node.data['href'] + "\r\n";
+                    if (node.expanded) toc += indent + "  expanded:" + node.expanded + "\r\n";
+                    if (node.children instanceof Object) toc += indent + "  items:\r\n";
+                }
             }
 
             var value = val;
             if (value instanceof Object) {
-                if (key == "children" && toc != "") depth++;
+                depth++;
                 $.each(value, function (key, val) {
                     recursiveFunction(key, val, depth, tmpStr);
                 });
@@ -144,20 +121,22 @@ $(function () {
         if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
         node.folder = true;
         var newNode = node.editCreateNode("child", {
-            title: $("#nodeTitle").val(),
-            href: $("#nodeHref").val()
+            title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
+            href: $("#newNodeHref").val(),
+            toc: $("#newNodeTitle").val()
         });
         node.render();
         //$("#tree").fancytree("getTree").activateKey(node.key);
-        $("#nodeTitle").val("");
-        $("#nodeHref").val("");
+        $("#newNodeTitle").val("");
+        $("#newNodeHref").val("");
+        $("#newNode").toggle();
     });
 
     $("button#updateNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         node.data['href'] = $("#nodeHref").val();
         node.data['toc'] = $("#nodeTitle").val();
-        node.title = ($("showHref").clicked) ? $("#nodeTitle").val() + " <em style='color: blue;'>(" + $("#nodeHref").val() + ")</em>" : $("#nodeTitle").val();
+        node.title = $("#nodeTitle").val() + titleFormat($("#nodeHref").val());
         node.renderTitle();
     }).attr("disabled", true);
 
@@ -207,7 +186,7 @@ $(function () {
         function recursiveFunction(key, val, isChecked = false) {
             if (key == "key") {
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
-                node.title = (isChecked) ? node.data['toc'] + " <em style='color: blue;'>(" + node.data['href'] + ")</em>" : node.data['toc'];
+                node.title = node.data['toc'] + titleFormat(node.data['href']);
                 node.renderTitle();
             }
 
@@ -218,5 +197,9 @@ $(function () {
                 });
             }
         }
+    });
+
+    $("#createNode").click(function () {
+        $("#newNode").toggle();
     });
 });

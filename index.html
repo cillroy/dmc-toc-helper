@@ -149,7 +149,10 @@
                     // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node + "\r\ndata.node.data['toc']: " + data.node.data['toc'] + "\r\ndata.node.data['href']: " + data.node.data['href'] + "\r\ndata.node['expanded']:" + data.node['expanded']);
+                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
+                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
+                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
+                        "\r\ndata.node['expanded']:" + data.node['expanded']);
                     $("#nodeTitle").val(data.node.data['toc']);
                     $("#nodeHref").val(data.node.data['href']);
                     $("#updateNode").attr("disabled", false);
@@ -181,7 +184,7 @@
                 <button id="resetSearch" disabled="true">&times;</button>
                 <span id="matches"></span>
             </div>
-            <div id="add">
+            <div id="manage">
                 <button id="sortTree">Sort Tree</button>
                 <button id="sortBranch">Sort Branch</button>
                 <input type="checkbox" id="showHref">Show href in title</input>
@@ -194,8 +197,18 @@
                 <button id="updateNode">Update Node</button>
                 <button id="toggleFolder">Toggle Folder/Node</button>
             </div>
-            <div>
-                <button id="addNode">Add Node</button>
+            <div id="add">
+                <button id="createNode">Create Node</button>
+                <div id="newNode">
+                    <h2>ADD NEW NODE</h2>
+                    <label>Node Title</label>
+                    <input type="text" id="newNodeTitle" />
+                    <label>Node href</label>
+                    <input type="text" id="newNodeHref" />
+                    <div>
+                        <button id="addNode">Add Node</button>
+                    </div>
+                </div>
             </div>
             <div id="tree"></div>
             <div id="debug">
