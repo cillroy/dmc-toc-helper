@@ -4,7 +4,7 @@ span.drag-source {
     padding: 2px;
     background-color: silver
 }
-
+/*
 ul.fancytree-container {
     max-height: 200px;
     overflow-y: scroll;
@@ -28,6 +28,7 @@ span.fancytree-node.fancytree-drop-accept {
 span.fancytree-node.fancytree-drop-reject {
     outline: 1px dotted red;
 }
+*/
 
 #container {
     background-color: gray;

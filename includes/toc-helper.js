@@ -5,7 +5,7 @@ $(function () {
         var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
         return outString;
     }
-    
+
     $("input[name=search]").keyup(function (e) {
         var n,
             tree = $.ui.fancytree.getTree(),
@@ -71,12 +71,14 @@ $(function () {
         });
 
         var tmpExpand = "";
+        var isRoot = true;
 
-        function recursiveFunction(key, val, depth = 0, tmpStr = "") {
+        function recursiveFunction(key, val, depth = -2, tmpStr = "") {
             if (key == "key") {
                 var indent = addIndents(depth);
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
                 if (val != "root_1" && node.title != "root") {
+                    isRoot = false;
                     toc += indent + "- name:" + node.data['toc'] + "\r\n";
                     if (node.data['href']) toc += indent + "  href:" + node.data['href'] + "\r\n";
                     if (node.expanded) toc += indent + "  expanded:" + node.expanded + "\r\n";
@@ -86,7 +88,7 @@ $(function () {
 
             var value = val;
             if (value instanceof Object) {
-                depth++;
+                if (!isRoot) depth++;
                 $.each(value, function (key, val) {
                     recursiveFunction(key, val, depth, tmpStr);
                 });
@@ -101,13 +103,40 @@ $(function () {
 
         $("#codeText").val(toc);
         //$("#codeText").val(toc + "\r\n\r\n--- END ---\r\n\r\n" + JSON.stringify(treeCode, null, 4));
-        //console.log(JSON.stringify(treeCode, null, 4));
+        console.log(JSON.stringify(treeCode, null, 4));
     });
 
     $("button#makeTree").click(function (e) {
         alert("Update Tree");
+        var treeSourceStart = '{ expanded": true, "key": "root_1", "title": "root", "children": [ {';
+        var treeSourceEnd = ']}';
+        var treeSource = "";
+        var lines = $("#codeText").val().split("\r\n");
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].split(":");
+            switch (line[0]) {
+                case "- name":
+                    treeSource += '"title: "' + line[1] + ',';
+                    break;
+                case "href":
+                    treeSource += '"data": { href: "' + line[1] + ',';
+                    break;
+                case "toc":
+                    treeSource += '"toc: "' + line[1] + '}';
+                    break;
+                case "expanded":
+                    treeSource += '"expanded: "' + line[1] + ',';
+                    break;
+                case "items:":
+                    treeSource += '"children: [{"' + line[1];
+                    break;
+            }
+        }
+
+        treeSourceStart += treeSource + treeSourceEnd;
+        treeSource = treeSourceStart;
+        console.log(treeSource);
         var tree = $("#tree").fancytree("getTree");
-        tree.source = document.getElementById("codeText").value;
     });
 
     $("button#btnResetSearch").click(function (e) {
@@ -116,22 +145,7 @@ $(function () {
         tree.clearFilter();
     }).attr("disabled", true);
 
-    $("button#addNode").click(function (e) {
-        var node = $("#tree").fancytree("getActiveNode");
-        if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
-        node.folder = true;
-        var newNode = node.editCreateNode("child", {
-            title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
-            href: $("#newNodeHref").val(),
-            toc: $("#newNodeTitle").val()
-        });
-        node.render();
-        //$("#tree").fancytree("getTree").activateKey(node.key);
-        $("#newNodeTitle").val("");
-        $("#newNodeHref").val("");
-        $("#newNode").toggle();
-    });
-
+    /* DO I SET FOCUS ON NEW NODE OR KEEP FOCUS ON ACTIVE NODE? */
     $("button#updateNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         node.data['href'] = $("#nodeHref").val();
@@ -200,6 +214,24 @@ $(function () {
     });
 
     $("#createNode").click(function () {
+        $("span", this).text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
+        $("#newNode").toggle();
+    });
+
+    $("button#addNode").click(function (e) {
+        var node = $("#tree").fancytree("getActiveNode");
+        if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
+        node.folder = true;
+        var newNode = node.editCreateNode("child", {
+            title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
+            href: $("#newNodeHref").val(),
+            toc: $("#newNodeTitle").val()
+        });
+        node.render();
+        //$("#tree").fancytree("getTree").activateKey(node.key);
+        $("#newNodeTitle").val("");
+        $("#newNodeHref").val("");
+        $("span", "#createNode").text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
         $("#newNode").toggle();
     });
 });

@@ -168,6 +168,8 @@
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
 
             var tree = $("#tree").fancytree("getTree");
+
+            $("#showHref")[0].checked = false;
         });
     </script>
 </head>
@@ -198,7 +200,9 @@
                 <button id="toggleFolder">Toggle Folder/Node</button>
             </div>
             <div id="add">
-                <button id="createNode">Create Node</button>
+                <button id="createNode">
+                    <span id="createNodeSpan">Create Node [+]</span>
+                </button>
                 <div id="newNode">
                     <h2>ADD NEW NODE</h2>
                     <label>Node Title</label>
