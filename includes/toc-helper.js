@@ -111,7 +111,7 @@ $(function () {
     $("button#makeTree").click(function (e) {
         var treeSourceStart = "---" + newline + "expanded: true" + newline + "key: root_1" + newline + "title: root" + newline + "children: " + newline;
         var treeSource = treeSourceStart + $("#codeText").val();
-        treeSource = treeSource.replace(/items:/g, "children:");
+        //treeSource = treeSource.replace(/items:/g, "children:");
         treeSource = treeSource.replace(/name:/g, "title:");
         treeSource = processYaml(treeSource);
         $("#codeText").val(treeSource);
