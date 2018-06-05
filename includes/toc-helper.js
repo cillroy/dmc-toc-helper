@@ -108,42 +108,54 @@ $(function () {
         console.log(JSON.stringify(treeCode, null, 4));
     });
 
-    /* Use yamljs? */
     $("button#makeTree").click(function (e) {
         var treeSourceStart = "---" + newline + "expanded: true" + newline + "key: root_1" + newline + "title: root" + newline + "children: " + newline;
         var treeSource = treeSourceStart + $("#codeText").val();
-        /*
         treeSource = treeSource.replace(/items:/g, "children:");
         treeSource = treeSource.replace(/name:/g, "title:");
-        */
-        var nativeObject = YAML.parse(treeSource);
-        var lines = $("#codeText").val().split(newline);
-        for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].split(":");
-            switch (line[0]) {
-                case "- name":
-                    treeSource += '"title: "' + line[1] + ',';
-                    break;
-                case "href":
-                    treeSource += '"data": { href: "' + line[1] + ',';
-                    break;
-                case "toc":
-                    treeSource += '"toc: "' + line[1] + '}';
-                    break;
-                case "expanded":
-                    treeSource += '"expanded: "' + line[1] + ',';
-                    break;
-                case "items:":
-                    treeSource += '"children: [{"' + line[1];
-                    break;
-            }
-        }
+        treeSource = processYaml(treeSource);
         $("#codeText").val(treeSource);
+
+        var nativeObject = YAML.parse(treeSource);
+
         var yamlString = JSON.stringify(treeSourceStart + nativeObject, null, 4);
         yamlString = JSON.stringify(nativeObject, null, 4);
 
         $("#jsonGenerate").text(yamlString);
         console.log(yamlString);
+
+        function processYaml(yaml) {
+            var sOut = "";
+
+            var lines = yaml.split(newline);
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].split(":");
+                switch (line[0].trim()) {
+                    case "- title":
+                        var spaces = line[0].split("- title");
+                        var tmpSpace = evalSpaces(spaces[0]);
+                        sOut += "- title: " + line[1] + newline + tmpSpace + "data:" + newline + tmpSpace + "- toc: " + line[1] + newline + tmpSpace;
+                        break;
+                    case "children":
+                        var spaces = line[0].split("children");
+                        var tmpSpace = evalSpaces(spaces[0]);
+                        sOut += tmpSpace + "children: " + newline + tmpSpace;
+                        break;
+                    default:
+                        sOut += lines[i] + newline;
+                        break;
+                }
+                console.log(lines[i]);
+            }
+
+            function evalSpaces(inStr) {
+                var sOut = inStr;
+                if (inStr.length <= 0) sOut = "  ";
+                return sOut;
+            }
+
+            return sOut;
+        }
     });
 
     $("button#btnResetSearch").click(function (e) {
