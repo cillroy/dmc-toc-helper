@@ -122,8 +122,8 @@ $(function () {
         var yamlString = JSON.stringify(treeSourceStart + nativeObject, null, 4);
         yamlString = JSON.stringify(nativeObject, null, 4);
 
-        $("#jsonGenerate").text(yamlString);
-        console.log(yamlString);
+        //$("#jsonGenerate").text(yamlString);
+        //console.log(yamlString);
 
         function processYaml(yaml) {
             var sOut = "";
