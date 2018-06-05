@@ -79,7 +79,8 @@ span.fancytree-node.fancytree-drop-reject {
 }
 
 #statusLine,
-#jsonGenerate {
+#jsonGenerate,
+#yamlGenerate {
     padding: 20px;
     background-color: lightgrey
 }

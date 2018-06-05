@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -17,6 +18,9 @@
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.dnd5.js"></script>
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.filter.js"></script>
     <script type="text/javascript" src="assets/fancytree/src/jquery.fancytree.wide.js"></script>
+
+    <!-- yaml to json-->
+    <script type="text/javascript" src="assets/yamljs/dist/yaml.js"></script>
 
     <!-- dmc Includes -->
     <link rel="stylesheet" type="text/css" href="includes/toc-helper.css" />
@@ -203,7 +207,7 @@
             <div id="manage">
                 <button id="sortTree">Sort Tree</button>
                 <button id="sortBranch">Sort Branch</button>
-                <input type="checkbox" id="showHref">Show href in title</input>
+                <input type="checkbox" id="showHref">Show href in title
             </div>
             <div id="edit">
                 <label>Node Title</label>
@@ -233,9 +237,23 @@
                 <div id="debugTitle" style="padding-top: 20px;">
                     <b>DEBUG:</b>
                 </div>
-                <div class="debugHeader">active node</div>
+                <div class="debugHeader">
+                    <button id="activeNode">
+                        <span id="activeNodeSpan">active node [-]</span>
+                    </button>
+                </div>
                 <div id="statusLine"></div>
-                <div class="debugHeader">tree&lt;code</div>
+                <div class="debugHeader">
+                    <button id="jsonValues">
+                        <span id="jsonValuesSpan">tree &gt; code [-]</span>
+                    </button>
+                </div>
+                <div id="yamlGenerate"></div>
+                <div class="debugHeader">
+                    <button id="yamlValues">
+                        <span id="yamlValuesSpan">tree &lt; code [-]</span>
+                    </button>
+                </div>
                 <div id="jsonGenerate"></div>
             </div>
         </div>
@@ -247,7 +265,7 @@
                 <textarea id="codeText" placeholder="docs.microsoft.com table of contents code goes here..."></textarea>
             </div>
         </div>
-        <div style="float: none;" />
+        <div style="float: none;"></div>
     </div>
 </body>
 

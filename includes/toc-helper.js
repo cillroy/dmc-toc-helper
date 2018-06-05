@@ -1,4 +1,5 @@
 var missingNodeMsg = "No node selected!\r\nPlease select a node and try again.";
+var newline = "\n";
 
 $(function () {
     function titleFormat(val) {
@@ -79,10 +80,10 @@ $(function () {
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
                 if (val != "root_1" && node.title != "root") {
                     isRoot = false;
-                    toc += indent + "- name:" + node.data['toc'] + "\r\n";
-                    if (node.data['href']) toc += indent + "  href:" + node.data['href'] + "\r\n";
-                    if (node.expanded) toc += indent + "  expanded:" + node.expanded + "\r\n";
-                    if (node.children instanceof Object) toc += indent + "  items:\r\n";
+                    toc += indent + "- name: " + node.data['toc'] + newline;
+                    if (node.data['href']) toc += indent + "  href: " + node.data['href'] + newline;
+                    if (node.expanded) toc += indent + "  expanded: " + node.expanded + newline;
+                    if (node.children instanceof Object) toc += indent + "  items: " + newline;
                 }
             }
 
@@ -103,15 +104,20 @@ $(function () {
 
         $("#codeText").val(toc);
         //$("#codeText").val(toc + "\r\n\r\n--- END ---\r\n\r\n" + JSON.stringify(treeCode, null, 4));
+        $("#yamlGenerate").text(JSON.stringify(treeCode, null, 4));
         console.log(JSON.stringify(treeCode, null, 4));
     });
 
-    /* Use node.js to format yaml2json? */
+    /* Use yamljs? */
     $("button#makeTree").click(function (e) {
-        var treeSourceStart = '{ expanded": true, "key": "root_1", "title": "root", "children": [ {';
-        var treeSourceEnd = ']}';
-        var treeSource = "";
-        var lines = $("#codeText").val().split("\r\n");
+        var treeSourceStart = "---" + newline + "expanded: true" + newline + "key: root_1" + newline + "title: root" + newline + "children: " + newline;
+        var treeSource = treeSourceStart + $("#codeText").val();
+        /*
+        treeSource = treeSource.replace(/items:/g, "children:");
+        treeSource = treeSource.replace(/name:/g, "title:");
+        */
+        var nativeObject = YAML.parse(treeSource);
+        var lines = $("#codeText").val().split(newline);
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i].split(":");
             switch (line[0]) {
@@ -132,12 +138,12 @@ $(function () {
                     break;
             }
         }
+        $("#codeText").val(treeSource);
+        var yamlString = JSON.stringify(treeSourceStart + nativeObject, null, 4);
+        yamlString = JSON.stringify(nativeObject, null, 4);
 
-        treeSourceStart += treeSource + treeSourceEnd;
-        treeSource = treeSourceStart;
-        $("#jsonGenerate").text(treeSource);
-        $("#jsonGenerate").text($("#codeText").val());
-        var tree = $("#tree").fancytree("getTree");
+        $("#jsonGenerate").text(yamlString);
+        console.log(yamlString);
     });
 
     $("button#btnResetSearch").click(function (e) {
@@ -155,9 +161,9 @@ $(function () {
         node.renderTitle();
 
         $("#statusLine").text("event.type: " + e.type + "\r\ndata.node: " + node +
-        "\r\ndata.node.data['toc']: " + node.data['toc'] +
-        "\r\ndata.node.data['href']: " + node.data['href'] +
-        "\r\ndata.node['expanded']:" + node['expanded']);
+            "\r\ndata.node.data['toc']: " + node.data['toc'] +
+            "\r\ndata.node.data['href']: " + node.data['href'] +
+            "\r\ndata.node['expanded']:" + node['expanded']);
     }).attr("disabled", true);
 
     $("button#sortTree").click(function (e) {
@@ -240,5 +246,20 @@ $(function () {
         //$("#tree").fancytree("getTree").activateKey(node.key);
         $("#newNodeTitle").val("");
         $("#newNodeHref").val("");
+    });
+
+    $("button#activeNode").click(function () {
+        $("span", this).text("active node [" + (($("#statusLine").is(":hidden")) ? "-" : "+") + "]");
+        $("#statusLine").toggle();
+    });
+
+    $("button#jsonValues").click(function () {
+        $("span", this).text("tree > code [" + (($("#yamlGenerate").is(":hidden")) ? "-" : "+") + "]");
+        $("#yamlGenerate").toggle();
+    });
+
+    $("button#yamlValues").click(function () {
+        $("span", this).text("tree < code [" + (($("#jsonGenerate").is(":hidden")) ? "-" : "+") + "]");
+        $("#jsonGenerate").toggle();
     });
 });
