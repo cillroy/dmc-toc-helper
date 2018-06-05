@@ -111,19 +111,20 @@ $(function () {
     $("button#makeTree").click(function (e) {
         var treeSourceStart = "---" + newline + "expanded: true" + newline + "key: root_1" + newline + "title: root" + newline + "children: " + newline;
         var treeSource = $("#codeText").val();
-        //treeSource = treeSource.replace(/items:/g, "children:");
         treeSource = treeSource.replace(/name:/g, "title:");
         treeSource = processYaml(treeSource);
         treeSource = treeSourceStart + treeSource;
-        $("#codeText").val(treeSource);
 
         var nativeObject = YAML.parse(treeSource);
-
         var yamlString = JSON.stringify(treeSourceStart + nativeObject, null, 4);
         yamlString = JSON.stringify(nativeObject, null, 4);
 
-        //$("#jsonGenerate").text(yamlString);
-        //console.log(yamlString);
+        $("#jsonGenerate").text(yamlString);
+        console.log(yamlString);
+
+        //$("#tree").fancytree("option", "source", yamlString);
+        var tree = $("#tree").fancytree("getTree");
+        tree.reload(yamlString);
 
         function processYaml(yaml) {
             var sOut = "";
@@ -135,7 +136,7 @@ $(function () {
                     case "- title":
                         var spaces = line[0].split("- title");
                         var tmpSpace = evalSpaces(spaces[0]);
-                        sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  " + "data:" + newline + tmpSpace + "    - toc: " + line[1] + newline + tmpSpace + "      ";
+                        sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  key: " + i + 1 + newline + tmpSpace + "  " + "data:" + newline + tmpSpace + "    - toc: " + line[1] + newline + tmpSpace + "      ";
                         break;
                     case "href":
                         sOut += "href: " + line[1] + newline;
@@ -143,6 +144,7 @@ $(function () {
                     case "items":
                         var spaces = line[0].split("items");
                         var tmpSpace = evalSpaces(spaces[0]);
+                        sOut += tmpSpace + tmpSpace + "folder: true" + newline;
                         sOut += tmpSpace + tmpSpace + "children: " + newline;
                         break;
                     default:
