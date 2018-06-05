@@ -110,10 +110,11 @@ $(function () {
 
     $("button#makeTree").click(function (e) {
         var treeSourceStart = "---" + newline + "expanded: true" + newline + "key: root_1" + newline + "title: root" + newline + "children: " + newline;
-        var treeSource = treeSourceStart + $("#codeText").val();
+        var treeSource = $("#codeText").val();
         //treeSource = treeSource.replace(/items:/g, "children:");
         treeSource = treeSource.replace(/name:/g, "title:");
         treeSource = processYaml(treeSource);
+        treeSource = treeSourceStart + treeSource;
         $("#codeText").val(treeSource);
 
         var nativeObject = YAML.parse(treeSource);
@@ -134,12 +135,15 @@ $(function () {
                     case "- title":
                         var spaces = line[0].split("- title");
                         var tmpSpace = evalSpaces(spaces[0]);
-                        sOut += "- title: " + line[1] + newline + tmpSpace + "data:" + newline + tmpSpace + "- toc: " + line[1] + newline + tmpSpace;
+                        sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  " + "data:" + newline + tmpSpace + "    - toc: " + line[1] + newline + tmpSpace + "      ";
                         break;
-                    case "children":
-                        var spaces = line[0].split("children");
+                    case "href":
+                        sOut += "href: " + line[1] + newline;
+                        break;
+                    case "items":
+                        var spaces = line[0].split("items");
                         var tmpSpace = evalSpaces(spaces[0]);
-                        sOut += tmpSpace + "children: " + newline + tmpSpace;
+                        sOut += tmpSpace + tmpSpace + "children: " + newline;
                         break;
                     default:
                         sOut += lines[i] + newline;
@@ -151,6 +155,7 @@ $(function () {
             function evalSpaces(inStr) {
                 var sOut = inStr;
                 if (inStr.length <= 0) sOut = "  ";
+                if (sOut.length > 7) console.log("Spaces: " + sOut.length);
                 return sOut;
             }
 
