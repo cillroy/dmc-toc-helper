@@ -93,3 +93,21 @@ span.fancytree-node.fancytree-drop-reject {
     text-align: center;
     background-color: lightseagreen;
 }
+
+#copy {
+    float: right;
+    padding: 5px 10px 5px 10px;
+    margin: 0px;
+    border: 1px #999 dashed;
+    color: grey;
+    position: relative;
+    top: 30px;
+    left: 4px;
+    background-color: lightgrey;
+}
+
+#copy:hover {
+    border: 1px black solid;
+    color: black;
+    background-color: #999;
+}

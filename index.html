@@ -93,46 +93,7 @@
                 icon: true,
                 quicksearch: true,
                 selectMode: 2,
-                source: [{
-                        title: "Node 1",
-                        key: "1",
-                        href: "node1.md",
-                        toc: "Node 1"
-                    },
-                    {
-                        title: "Folder 2",
-                        key: "2",
-                        href: "node2.md",
-                        toc: "Folder 2",
-                        folder: true,
-                        children: [{
-                                title: "Node 2.1",
-                                key: "3",
-                                href: "node2.1.md",
-                                toc: "Node 2.1"
-                            },
-                            {
-                                title: "Node 2.2",
-                                key: "4",
-                                href: "node2.2.md",
-                                toc: "Node 2.2"
-                            }
-                        ]
-                    },
-                    {
-                        title: "Folder 3",
-                        key: "5",
-                        href: "node3.md",
-                        toc: "Folder 3",
-                        folder: true,
-                        children: [{
-                            title: "Node 3.1",
-                            key: "6",
-                            href: "node3.1.md",
-                            toc: "Node 3.1"
-                        }]
-                    }
-                ],
+                source: jsonSource,
                 filter: {
                     autoApply: true, // Re-apply last filter if lazy data is loaded
                     autoExpand: true, // Expand all branches that contain matches while filtered
@@ -152,10 +113,11 @@
                     // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
-                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
-                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
-                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                    $("#statusLine").text("event.type: " + event.type +
+                        newline + "data.node: " + data.node +
+                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
+                        newline + "data.node.data['href']: " + data.node.data['href'] +
+                        newline + "data.node['expanded']:" + data.node['expanded']);
                     $("#nodeTitle").val(data.node.data['toc']);
                     $("#nodeHref").val(data.node.data['href']);
                     $("#updateNode").attr("disabled", false);
@@ -165,22 +127,25 @@
                     data.node.updateCounters();
                 },
                 renderNode: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
-                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
-                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
-                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                    $("#statusLine").text("event.type: " + event.type +
+                        newline + "data.node: " + data.node +
+                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
+                        newline + "data.node.data['href']: " + data.node.data['href'] +
+                        newline + "data.node['expanded']:" + data.node['expanded']);
                 },
                 expand: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
-                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
-                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
-                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                    $("#statusLine").text("event.type: " + event.type +
+                        newline + "data.node: " + data.node +
+                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
+                        newline + "data.node.data['href']: " + data.node.data['href'] +
+                        newline + "data.node['expanded']:" + data.node['expanded']);
                 },
                 collapse: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type + "\r\ndata.node: " + data.node +
-                        "\r\ndata.node.data['toc']: " + data.node.data['toc'] +
-                        "\r\ndata.node.data['href']: " + data.node.data['href'] +
-                        "\r\ndata.node['expanded']:" + data.node['expanded']);
+                    $("#statusLine").text("event.type: " + event.type +
+                        newline + "data.node: " + data.node +
+                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
+                        newline + "data.node.data['href']: " + data.node.data['href'] +
+                        newline + "data.node['expanded']:" + data.node['expanded']);
                 },
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
@@ -197,6 +162,9 @@
         <div id="treeWrapper">
             <div id="buttonWrapper">
                 <button id="makeCode">Tree > Code</button>
+            </div>
+            <div id="resetWrapper">
+                <button id="reset">Reset</button>
             </div>
             <div id="filterWrapper">
                 <label>Filter:</label>
@@ -259,7 +227,15 @@
         </div>
         <div id="codeWrapper">
             <div class="buttonWrapper">
-                <button class="" id=makeTree>Tree &lt; Code</button>
+                <button id=makeTree>Tree &lt; Code</button>
+            </div>
+            <div>
+                <label id="tocType">Select ToC language</label>
+                <select>
+                    <option value="markdown">markdown toc.md</option>
+                    <option value="yaml" selected>yaml toc.yml</option>
+                </select>
+                <button id="copy">copy</button>
             </div>
             <div id="code">
                 <textarea id="codeText" placeholder="docs.microsoft.com table of contents code goes here..."></textarea>

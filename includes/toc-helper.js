@@ -1,11 +1,64 @@
 var missingNodeMsg = "No node selected!\r\nPlease select a node and try again.";
 var newline = "\n";
+var jsonSource = [{
+        title: "Node 1",
+        toc: "Node 1",
+        href: "node1.md"
+    },
+    {
+        title: "Folder 2",
+        toc: "Folder 2",
+        href: "node2.md",
+        "folder": true,
+        "children": [{
+                title: "Node 2.1",
+                toc: "Node 2.1",
+                href: "node2.1.md"
+            },
+            {
+                title: "Node 2.2",
+                toc: "Node 2.2",
+                href: "node2.2.md"
+            }
+        ]
+    },
+    {
+        title: "Folder 3",
+        toc: "Folder 3",
+        href: "node3.md",
+        "folder": true,
+        "children": [{
+            title: "Node 3.1",
+            toc: "Node 3.1",
+            href: "node3.1.md"
+        }]
+    }
+];
 
 $(function () {
     function titleFormat(val) {
         var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
         return outString;
     }
+
+    $("#copy").click(function () {
+        //var copyTextarea = document.querySelector('codeText');
+        var copyTextarea = document.getElementById("codeText");
+        copyTextarea.focus();
+        copyTextarea.select();
+      
+        try {
+          var successful = document.execCommand('copy');
+          var msg = successful ? 'successful' : 'unsuccessful';
+          console.log('Copying text command was ' + msg);
+        } catch (err) {
+          console.log('Oops, unable to copy');
+        }
+    })
+
+    $("#reset").click(function () {
+        $("#tree").fancytree("option", "source", jsonSource);
+    });
 
     $("input[name=search]").keyup(function (e) {
         var n,
@@ -15,16 +68,6 @@ $(function () {
             opts = {},
             filterFunc = $("#branchMode").is(":checked") ? tree.filterBranches : tree.filterNodes,
             match = $(this).val();
-
-        /*
-        $.each(args, function (i, o) {
-            opts[o] = $("#" + o).is(":checked");
-        });
-        */
-
-        /*
-        opts.mode = $("#hideMode").is(":checked") ? "hide" : "dimm";
-        */
 
         if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
             $("button#btnResetSearch").click();
@@ -92,22 +135,17 @@ $(function () {
     });
 
     $("button#makeTree").click(function (e) {
-        var treeSourceStart = "---" + newline + "expanded: true" + newline + "key: root_1" + newline + "title: root" + newline + "children: " + newline;
         var treeSource = $("#codeText").val();
-        treeSource = treeSource.replace(/name:/g, "title:");
         treeSource = processYaml(treeSource);
-        treeSource = treeSourceStart + treeSource;
 
         var nativeObject = YAML.parse(treeSource);
-        var yamlString = JSON.stringify(treeSourceStart + nativeObject, null, 4);
-        yamlString = JSON.stringify(nativeObject, null, 4);
+        var yamlString = JSON.stringify(nativeObject, null, 4);
 
         $("#jsonGenerate").text(yamlString);
-        console.log(yamlString);
 
-        //$("#tree").fancytree("option", "source", yamlString);
-        var tree = $("#tree").fancytree("getTree");
-        tree.reload(yamlString);
+        yamlString = JSON.parse(yamlString);
+
+        $("#tree").fancytree("option", "source", yamlString);
 
         function processYaml(yaml) {
             var sOut = "";
@@ -116,31 +154,26 @@ $(function () {
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].split(":");
                 switch (line[0].trim()) {
-                    case "- title":
-                        var spaces = line[0].split("- title");
+                    case "- name":
+                        var spaces = line[0].split("- name");
                         var tmpSpace = evalSpaces(spaces[0]);
-                        sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  key: " + i + 1 + newline + tmpSpace + "  " + "data:" + newline + tmpSpace + "    - toc: " + line[1] + newline + tmpSpace + "      ";
-                        break;
-                    case "href":
-                        sOut += "href: " + line[1] + newline;
+                        sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  toc: " + line[1] + newline;
                         break;
                     case "items":
                         var spaces = line[0].split("items");
                         var tmpSpace = evalSpaces(spaces[0]);
-                        sOut += tmpSpace + tmpSpace + "folder: true" + newline;
-                        sOut += tmpSpace + tmpSpace + "children: " + newline;
+                        sOut += tmpSpace + "folder: true" + newline;
+                        sOut += tmpSpace + "children: " + newline;
                         break;
                     default:
                         sOut += lines[i] + newline;
                         break;
                 }
-                console.log(lines[i]);
             }
 
             function evalSpaces(inStr) {
                 var sOut = inStr;
-                if (inStr.length <= 0) sOut = "  ";
-                if (sOut.length > 7) console.log("Spaces: " + sOut.length);
+                //if (inStr.length <= 0) sOut = "  ";
                 return sOut;
             }
 
