@@ -45,23 +45,6 @@ $(function () {
         $("span#matches").text("(" + n + " matches)");
     }).focus();
 
-    /*
-    $("fieldset input:checkbox").change(function (e) {
-        var id = $(this).attr("id"),
-            flag = $(this).is(":checked");
-
-        // Some options can only be set with general filter options (not method args):
-        switch (id) {
-            case "counter":
-            case "hideExpandedCounter":
-                tree.options.filter[id] = flag;
-                break;
-        }
-        tree.clearFilter();
-        $("input[name=search]").keyup();
-    });
-    */
-
     $("button#makeCode").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
         var treeCode = tree.toDict(true);
