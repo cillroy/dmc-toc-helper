@@ -133,6 +133,7 @@ $(function () {
 
         $("#codeText").val(toc);
         $("#yamlGenerate").text(JSON.stringify(treeCode, null, 4));
+        alert("Table of Contents yaml code was generated." + newline + newline + "You will need to save this as a .yml file.");
     });
 
     $("button#makeTree").click(function (e) {
