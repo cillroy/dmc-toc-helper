@@ -124,6 +124,7 @@
                 },
                 loadChildren: function (event, data) {
                     // update node and parent counters after lazy loading
+                    manageNodeTitles();
                     data.node.updateCounters();
                 },
                 renderNode: function (event, data) {

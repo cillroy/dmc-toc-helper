@@ -35,11 +35,41 @@ var jsonSource = [{
     }
 ];
 
-$(function () {
-    function titleFormat(val) {
-        var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
-        return outString;
+function titleFormat(val) {
+    var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
+    return outString;
+}
+
+function manageNodeTitles() {
+    var tree = $("#tree").fancytree("getRootNode");
+    var treeCode = tree.toDict(true);
+    var isChecked = this.checked;
+
+    $.each(treeCode.children, function (key, val) {
+        recursiveFunction(key, val, isChecked);
+    });
+
+    var currTitle = "";
+    var tmpTitle = "";
+    var keyId = "";
+
+    function recursiveFunction(key, val, isChecked = false) {
+        if (key == "key") {
+            var node = $("#tree").fancytree("getTree").getNodeByKey(val);
+            node.title = node.data['toc'] + titleFormat(node.data['href']);
+            node.renderTitle();
+        }
+
+        var value = val;
+        if (value instanceof Object) {
+            $.each(value, function (key, val) {
+                recursiveFunction(key, val, isChecked);
+            });
+        }
     }
+}
+
+$(function () {
 
     $("#copy").click(function () {
         //var copyTextarea = document.querySelector('codeText');
@@ -61,6 +91,7 @@ $(function () {
     $("#reset").click(function () {
         $("#tree").fancytree("option", "source", jsonSource);
         $("#codeText").val(" ");
+        manageNodeTitles();
     });
 
     $("input[name=search]").keyup(function (e) {
@@ -133,6 +164,7 @@ $(function () {
 
         $("#codeText").val(toc);
         $("#yamlGenerate").text(JSON.stringify(treeCode, null, 4));
+        $("#tocLanguage").val("yaml");
         alert("Table of Contents yaml code was generated." + newline + newline + "You will need to save this as a .yml file.");
     });
 
@@ -151,9 +183,18 @@ $(function () {
                 tocJSON = JSON.parse(yamlString);
                 break;
             case "markdown":
-                alert("NOT IMPLEMENTED YET");
+                treeSource = processMarkdown(treeSource);
+                console.log("processMarkdown" + newline + treeSource);
+                var nativeObject = YAML.parse(treeSource);
+                var yamlString = JSON.stringify(nativeObject, null, 4);
+
+                $("#jsonGenerate").text(yamlString);
+
+                tocJSON = JSON.parse(yamlString, null, 4);
+
                 break;
         }
+
         $("#tree").fancytree("option", "source", tocJSON);
         alert("Table of Content updated from code");
 
@@ -166,12 +207,12 @@ $(function () {
                 switch (line[0].trim()) {
                     case "- name":
                         var spaces = line[0].split("- name");
-                        var tmpSpace = evalSpaces(spaces[0]);
+                        var tmpSpace = spaces[0];
                         sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  toc: " + line[1] + newline;
                         break;
                     case "items":
                         var spaces = line[0].split("items");
-                        var tmpSpace = evalSpaces(spaces[0]);
+                        var tmpSpace = spaces[0];
                         sOut += tmpSpace + "folder: true" + newline;
                         sOut += tmpSpace + "children: " + newline;
                         break;
@@ -181,9 +222,54 @@ $(function () {
                 }
             }
 
-            function evalSpaces(inStr) {
-                var sOut = inStr;
-                //if (inStr.length <= 0) sOut = "  ";
+            return sOut;
+        }
+
+        function processMarkdown(markdown) {
+            var sOut = "";
+            var hashtagCount = 0;
+            var lines = markdown.split(newline);
+
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].substring(0, 1) == "#") {
+                    sOut += walkLine(lines[i]);
+                }
+            }
+
+            function walkLine(inStr) {
+                var sOut = "";
+                var title = "";
+                var href = "";
+                var lineArr = inStr.split(" ", 1);
+                var titleArr;
+                var hrefArr;
+                var showItems = false;
+                showItems = hashtagCount < (lineArr[0].length - 1);
+                hashtagCount = lineArr[0].length - 1;
+                spaces = evalIndent(hashtagCount);
+
+                if (inStr.includes("# [")) {
+                    lineArr = inStr.split("[");
+                    titleArr = lineArr[1].split("]");
+                    title = titleArr[0] + newline;
+                    hrefArr = titleArr[1].split("(");
+                    href = spaces + "  href: " + hrefArr[1].substring(0, hrefArr[1].length - 1) + newline;
+                } else {
+                    title = inStr.replace(lineArr[0] + " ", "") + newline;
+                }
+
+                sOut = ((showItems) ? spaces + "folder: true" + newline + spaces + "children: " + newline : "") +
+                    spaces + "- title: " + title + spaces + "  toc: " + title +
+                    ((href.length > 0) ? href : "");
+                return sOut;
+            }
+
+            function evalIndent(inStr) {
+                var sOut = "";
+                var spaces = (inStr) * 2;
+                for (var i = 1; i <= spaces; i++) {
+                    sOut += " ";
+                }
                 return sOut;
             }
 
@@ -242,32 +328,7 @@ $(function () {
     });
 
     $("#showHref").click(function () {
-        var tree = $("#tree").fancytree("getRootNode");
-        var treeCode = tree.toDict(true);
-        var isChecked = this.checked;
-
-        $.each(treeCode.children, function (key, val) {
-            recursiveFunction(key, val, isChecked);
-        });
-
-        var currTitle = "";
-        var tmpTitle = "";
-        var keyId = "";
-
-        function recursiveFunction(key, val, isChecked = false) {
-            if (key == "key") {
-                var node = $("#tree").fancytree("getTree").getNodeByKey(val);
-                node.title = node.data['toc'] + titleFormat(node.data['href']);
-                node.renderTitle();
-            }
-
-            var value = val;
-            if (value instanceof Object) {
-                $.each(value, function (key, val) {
-                    recursiveFunction(key, val, isChecked);
-                });
-            }
-        }
+        manageNodeTitles();
     });
 
     $("#createNode").click(function () {
