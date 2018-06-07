@@ -1,5 +1,5 @@
-var missingNodeMsg = "No node selected!\r\nPlease select a node and try again.";
 var newline = "\n";
+var missingNodeMsg = "No node selected!" + newline + "Please select a node and try again.";
 var jsonSource = [{
         title: "Node 1",
         toc: "Node 1",
@@ -46,18 +46,21 @@ $(function () {
         var copyTextarea = document.getElementById("codeText");
         copyTextarea.focus();
         copyTextarea.select();
-      
+
         try {
-          var successful = document.execCommand('copy');
-          var msg = successful ? 'successful' : 'unsuccessful';
-          console.log('Copying text command was ' + msg);
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copying text command was ' + msg);
+            alert("Table of Contents was copied." + newline + newline + "You will need to save this as a .yml file.");
         } catch (err) {
-          console.log('Oops, unable to copy');
+            console.log('Copying text command was ' + msg);
+            alert('Oops, unable to copy');
         }
     })
 
     $("#reset").click(function () {
         $("#tree").fancytree("option", "source", jsonSource);
+        $("#codeText").val(" ");
     });
 
     $("input[name=search]").keyup(function (e) {
@@ -129,23 +132,29 @@ $(function () {
         }
 
         $("#codeText").val(toc);
-        //$("#codeText").val(toc + "\r\n\r\n--- END ---\r\n\r\n" + JSON.stringify(treeCode, null, 4));
         $("#yamlGenerate").text(JSON.stringify(treeCode, null, 4));
-        console.log(JSON.stringify(treeCode, null, 4));
     });
 
     $("button#makeTree").click(function (e) {
         var treeSource = $("#codeText").val();
-        treeSource = processYaml(treeSource);
+        var tocJSON = "";
 
-        var nativeObject = YAML.parse(treeSource);
-        var yamlString = JSON.stringify(nativeObject, null, 4);
+        switch ($("#tocLanguage").val()) {
+            case "yaml":
+                treeSource = processYaml(treeSource);
+                var nativeObject = YAML.parse(treeSource);
+                var yamlString = JSON.stringify(nativeObject, null, 4);
 
-        $("#jsonGenerate").text(yamlString);
+                $("#jsonGenerate").text(yamlString);
 
-        yamlString = JSON.parse(yamlString);
-
-        $("#tree").fancytree("option", "source", yamlString);
+                tocJSON = JSON.parse(yamlString);
+                break;
+            case "markdown":
+                alert("NOT IMPLEMENTED YET");
+                break;
+        }
+        $("#tree").fancytree("option", "source", tocJSON);
+        alert("Table of Content updated from code");
 
         function processYaml(yaml) {
             var sOut = "";

@@ -207,19 +207,19 @@
                 </div>
                 <div class="debugHeader">
                     <button id="activeNode">
-                        <span id="activeNodeSpan">active node [-]</span>
+                        <span id="activeNodeSpan">active node [+]</span>
                     </button>
                 </div>
                 <div id="statusLine"></div>
                 <div class="debugHeader">
                     <button id="jsonValues">
-                        <span id="jsonValuesSpan">tree &gt; code [-]</span>
+                        <span id="jsonValuesSpan">tree &gt; code [+]</span>
                     </button>
                 </div>
                 <div id="yamlGenerate"></div>
                 <div class="debugHeader">
                     <button id="yamlValues">
-                        <span id="yamlValuesSpan">tree &lt; code [-]</span>
+                        <span id="yamlValuesSpan">tree &lt; code [+]</span>
                     </button>
                 </div>
                 <div id="jsonGenerate"></div>
@@ -229,11 +229,11 @@
             <div class="buttonWrapper">
                 <button id=makeTree>Tree &lt; Code</button>
             </div>
-            <div>
-                <label id="tocType">Select ToC language</label>
-                <select>
-                    <option value="markdown">markdown toc.md</option>
-                    <option value="yaml" selected>yaml toc.yml</option>
+            <div id="tocPickerWrapper">
+                <label id="tocLanguageLabel">Select Table of Contents (ToC) language</label>
+                <select id="tocLanguage">
+                    <option value="markdown">markdown (toc.md)</option>
+                    <option value="yaml" selected>yaml (toc.yml)</option>
                 </select>
                 <button id="copy">copy</button>
             </div>

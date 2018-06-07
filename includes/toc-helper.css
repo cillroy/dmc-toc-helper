@@ -84,7 +84,8 @@ span.fancytree-node.fancytree-drop-reject {
 #jsonGenerate,
 #yamlGenerate {
     padding: 20px;
-    background-color: lightgrey
+    background-color: lightgrey;
+    display: none;
 }
 
 .debugHeader {
@@ -96,17 +97,20 @@ span.fancytree-node.fancytree-drop-reject {
 
 #copy {
     float: right;
+    position: relative;
+    top: 30px;
+    left: 4px;
+}
+
+button {
     padding: 5px 10px 5px 10px;
     margin: 0px;
     border: 1px #999 dashed;
     color: grey;
-    position: relative;
-    top: 30px;
-    left: 4px;
     background-color: lightgrey;
 }
 
-#copy:hover {
+button:hover {
     border: 1px black solid;
     color: black;
     background-color: #999;
