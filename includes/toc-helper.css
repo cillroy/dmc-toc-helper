@@ -69,6 +69,10 @@ span.drag-source {
     background-color: lightseagreen;
 }
 
+#debugTitle {
+    padding-top: 20px;
+}
+
 #copy {
     float: right;
     position: relative;
