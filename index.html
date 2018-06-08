@@ -167,8 +167,8 @@
 <body>
     <div id="container">
         <div id="treeWrapper">
-            <div id="buttonWrapper">
-                <button id="makeCode">Tree > Code</button>
+            <div class="buttonWrapper">
+                <button id="makeCode">Tree &gt; Code (generate YAML)</button>
             </div>
             <div id="resetWrapper">
                 <button id="reset">Reset</button>
@@ -176,13 +176,13 @@
             <div id="filterWrapper">
                 <label>Filter:</label>
                 <input name="search" placeholder="Filter..." autocomplete="off">
-                <button id="resetSearch" disabled="true">&times;</button>
+                <button id="btnResetSearch" disabled="true">&times;</button>
                 <span id="matches"></span>
             </div>
             <div id="manage">
                 <button id="sortTree">Sort Tree</button>
                 <button id="sortBranch">Sort Branch</button>
-                <input type="checkbox" id="showHref">Show href in title
+                <input type="checkbox" id="showHref" checked>Show href in title
             </div>
             <div id="edit">
                 <label>Node Title</label>
@@ -234,7 +234,7 @@
         </div>
         <div id="codeWrapper">
             <div class="buttonWrapper">
-                <button id=makeTree>Tree &lt; Code</button>
+                <button id=makeTree>Tree &lt; Code (update tree)</button>
             </div>
             <div id="tocPickerWrapper">
                 <label id="tocLanguageLabel">Select Table of Contents (ToC) language</label>

@@ -1,5 +1,7 @@
 var newline = "\n";
 var missingNodeMsg = "No node selected!" + newline + "Please select a node and try again.";
+var msgYamlGenerated = "Table of Contents yaml code was generated." + newline + newline + "You will need to save this as a .yml file.";
+var msgTreeUpdated = "Table of Content updated from code";
 var jsonSource = [{
         title: "Node 1",
         toc: "Node 1",
@@ -95,6 +97,7 @@ $(function () {
     });
 
     $("input[name=search]").keyup(function (e) {
+        
         var n,
             tree = $.ui.fancytree.getTree(),
             args = "autoApply autoExpand fuzzy hideExpanders highlight leavesOnly nodata".split(
@@ -118,11 +121,11 @@ $(function () {
             n = filterFunc.call(tree, match, opts);
         }
 
-        $("button#btnResetSearch").attr("disabled", false);
+        $("#btnResetSearch").attr("disabled", false);
         $("span#matches").text("(" + n + " matches)");
     }).focus();
 
-    $("button#makeCode").click(function (e) {
+    $("#makeCode").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
         var treeCode = tree.toDict(true);
         var toc = "";
@@ -165,10 +168,10 @@ $(function () {
         $("#codeText").val(toc);
         $("#yamlGenerate").text(JSON.stringify(treeCode, null, 4));
         $("#tocLanguage").val("yaml");
-        alert("Table of Contents yaml code was generated." + newline + newline + "You will need to save this as a .yml file.");
+        alert(msgYamlGenerated);
     });
 
-    $("button#makeTree").click(function (e) {
+    $("#makeTree").click(function (e) {
         var treeSource = $("#codeText").val();
         var tocJSON = "";
 
@@ -196,7 +199,7 @@ $(function () {
         }
 
         $("#tree").fancytree("option", "source", tocJSON);
-        alert("Table of Content updated from code");
+        alert(msgTreeUpdated);
 
         function processYaml(yaml) {
             var sOut = "";
@@ -277,7 +280,7 @@ $(function () {
         }
     });
 
-    $("button#btnResetSearch").click(function (e) {
+    $("#btnResetSearch").click(function (e) {
         $("input[name=search]").val("");
         $("span#matches").text("");
         tree.clearFilter();
