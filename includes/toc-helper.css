@@ -11,6 +11,10 @@ span.drag-source {
     width: 90%;
 }
 
+#tree {
+    padding: 20px 0px 20px 0px;
+}
+
 #treeWrapper,
 #codeWrapper {
     float: left;

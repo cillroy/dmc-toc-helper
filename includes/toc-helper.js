@@ -153,6 +153,22 @@ $(function () {
         $("span#matches").text("(" + n + " matches)");
     }).focus();
 
+$("#expand").click(function () {
+    var tree = $("#tree").fancytree("getTree");
+
+    tree.visit(function(node){
+      node.setExpanded(true);
+    });
+});
+
+$("#collapse").click(function () {
+    var tree = $("#tree").fancytree("getTree");
+
+    tree.visit(function(node){
+      node.setExpanded(false);
+    });
+});
+
     $("#makeCode").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
         var treeCode = tree.toDict(true);
