@@ -334,6 +334,8 @@ $(function () {
         manageNodeTitles();
     });
 
+    $("#showHref").prop('checked', true);
+
     $("#createNode").click(function () {
         $("span", this).text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
         $("#newNode").toggle();
