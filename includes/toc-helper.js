@@ -100,7 +100,7 @@ $(function () {
         $("#debug").show()
     }
 
-    $("#copy").click(function () {
+    $("#copy").click(function (e) {
         //var copyTextarea = document.querySelector('codeText');
         var copyTextarea = document.getElementById("codeText");
         copyTextarea.focus();
@@ -117,7 +117,7 @@ $(function () {
         }
     })
 
-    $("#reset").click(function () {
+    $("#reset").click(function (e) {
         $("#tree").fancytree("option", "source", jsonSource);
         $("#codeText").val(" ");
         manageNodeTitles();
@@ -152,7 +152,7 @@ $(function () {
         $("span#matches").text("(" + n + " matches)");
     }).focus();
 
-    $("#expand").click(function () {
+    $("#expand").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
 
         tree.visit(function (node) {
@@ -160,7 +160,7 @@ $(function () {
         });
     });
 
-    $("#collapse").click(function () {
+    $("#collapse").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
 
         tree.visit(function (node) {
@@ -343,7 +343,7 @@ $(function () {
     }).attr("disabled", true);
 
     /* DO I SET FOCUS ON NEW NODE OR KEEP FOCUS ON ACTIVE NODE? */
-    $("button#updateNode").click(function (e) {
+    $("#updateNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         node.data['href'] = $("#nodeHref").val();
         node.data['toc'] = $("#nodeTitle").val();
@@ -356,12 +356,31 @@ $(function () {
             "\r\ndata.node['expanded']:" + node['expanded']);
     }).attr("disabled", true);
 
-    $("button#sortTree").click(function (e) {
+    $("#toggleFolder").click(function (e) {
+        var node = $("#tree").fancytree("getActiveNode");
+        if (node) {
+            node.folder = (node.folder) ? false : true;
+            node.render();
+        } else {
+            alert(missingNodeMsg);
+        }
+    });
+
+    $("#delete").click(function (e) {
+        var activeNode = $("#tree").fancytree("getActiveNode");
+        if (activeNode) {
+            activeNode.remove();
+        } else {
+            alert(missingNodeMsg);
+        }
+    });
+
+    $("#sortTree").click(function (e) {
         var node = $("#tree").fancytree("getRootNode");
         node.sortChildren(null, true);
     });
 
-    $("button#sortBranch").click(function (e) {
+    $("#sortBranch").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         if (node) {
             // Custom compare function (optional) that sorts case insensitive
@@ -376,28 +395,18 @@ $(function () {
         }
     });
 
-    $("button#toggleFolder").click(function (e) {
-        var node = $("#tree").fancytree("getActiveNode");
-        if (node) {
-            node.folder = (node.folder) ? false : true;
-            node.render();
-        } else {
-            alert(missingNodeMsg);
-        }
-    });
-
-    $("#showHref").click(function () {
+    $("#showHref").click(function (e) {
         manageNodeTitles();
     });
 
     $("#showHref").prop('checked', true);
 
-    $("#createNode").click(function () {
+    $("#createNode").click(function (e) {
         $("span", this).text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
         $("#newNode").toggle();
     });
 
-    $("button#addNode").click(function (e) {
+    $("#addNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
         node.folder = true;
@@ -415,17 +424,17 @@ $(function () {
         $("#newNodeHref").val("");
     });
 
-    $("button#activeNode").click(function () {
+    $("#activeNode").click(function (e) {
         $("span", this).text("active node [" + (($("#statusLine").is(":hidden")) ? "-" : "+") + "]");
         $("#statusLine").toggle();
     });
 
-    $("button#jsonValues").click(function () {
+    $("#jsonValues").click(function (e) {
         $("span", this).text("tree > code [" + (($("#yamlGenerate").is(":hidden")) ? "-" : "+") + "]");
         $("#yamlGenerate").toggle();
     });
 
-    $("button#yamlValues").click(function () {
+    $("#yamlValues").click(function (e) {
         $("span", this).text("tree < code [" + (($("#jsonGenerate").is(":hidden")) ? "-" : "+") + "]");
         $("#jsonGenerate").toggle();
     });

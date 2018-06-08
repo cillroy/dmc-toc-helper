@@ -13,6 +13,20 @@ div {
     padding: 10px 0px 0px 0px;
 }
 
+button {
+    padding: 5px 10px 5px 10px;
+    margin: 0px;
+    border: 1px #999 solid;
+    color: grey;
+    background-color: lightgrey;
+}
+
+button:hover {
+    border: 1px black solid;
+    color: white;
+    background-color: #999;
+}
+
 #container {
     background-color: gray;
     padding: 20px;
@@ -94,18 +108,4 @@ div {
     position: relative;
     top: 37px;
     left: 4px;
-}
-
-button {
-    padding: 5px 10px 5px 10px;
-    margin: 0px;
-    border: 1px #999 dashed;
-    color: grey;
-    background-color: lightgrey;
-}
-
-button:hover {
-    border: 1px black solid;
-    color: black;
-    background-color: #999;
 }
