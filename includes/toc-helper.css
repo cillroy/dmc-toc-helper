@@ -5,6 +5,14 @@ span.drag-source {
     background-color: silver
 }
 
+label {
+    padding: 0px 0px 0px 10px;
+}
+
+div {
+    padding: 10px 0px 0px 0px;
+}
+
 #container {
     background-color: gray;
     padding: 20px;
@@ -12,7 +20,7 @@ span.drag-source {
 }
 
 #tree {
-    padding: 20px 0px 20px 0px;
+    padding: 20px 0px 20px;
 }
 
 #treeWrapper,
@@ -48,13 +56,13 @@ span.drag-source {
 
 #newNode {
     text-align: center;
-    padding: 20px;
+    margin: 10px 0px 0px 0px;
     background-color: lightgreen;
     border: 1px solid black;
     display: none;
 }
 
-#newNode.div {
+#newNode > div {
     padding: 20px;
 }
 

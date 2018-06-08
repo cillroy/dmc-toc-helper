@@ -71,35 +71,34 @@ function manageNodeTitles() {
     }
 }
 
-function checkParemeterExists(parameter)
-{
-   //Get Query String from url
-   fullQString = window.location.search.substring(1);
-   
-   paramCount = 0;
-   queryStringComplete = "?";
+function checkParemeterExists(parameter) {
+    //Get Query String from url
+    fullQString = window.location.search.substring(1);
 
-   if(fullQString.length > 0)
-   {
-       //Split Query String into separate parameters
-       paramArray = fullQString.split("&");
-       
-       //Loop through params, check if parameter exists.  
-       for (i=0;i<paramArray.length;i++)
-       {
-         currentParameter = paramArray[i].split("=");
-         if(currentParameter[0] == parameter) //Parameter already exists in current url
-         {
-            return true;
-         }
-       }
-   }
-   
-   return false;
+    paramCount = 0;
+    queryStringComplete = "?";
+
+    if (fullQString.length > 0) {
+        //Split Query String into separate parameters
+        paramArray = fullQString.split("&");
+
+        //Loop through params, check if parameter exists.  
+        for (i = 0; i < paramArray.length; i++) {
+            currentParameter = paramArray[i].split("=");
+            if (currentParameter[0] == parameter) //Parameter already exists in current url
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 $(function () {
-    if (checkParemeterExists("debug")){ $("#debug").show()}
+    if (checkParemeterExists("debug")) {
+        $("#debug").show()
+    }
 
     $("#copy").click(function () {
         //var copyTextarea = document.querySelector('codeText');
@@ -125,7 +124,7 @@ $(function () {
     });
 
     $("input[name=search]").keyup(function (e) {
-        
+
         var n,
             tree = $.ui.fancytree.getTree(),
             args = "autoApply autoExpand fuzzy hideExpanders highlight leavesOnly nodata".split(
@@ -153,21 +152,21 @@ $(function () {
         $("span#matches").text("(" + n + " matches)");
     }).focus();
 
-$("#expand").click(function () {
-    var tree = $("#tree").fancytree("getTree");
+    $("#expand").click(function () {
+        var tree = $("#tree").fancytree("getTree");
 
-    tree.visit(function(node){
-      node.setExpanded(true);
+        tree.visit(function (node) {
+            node.setExpanded(true);
+        });
     });
-});
 
-$("#collapse").click(function () {
-    var tree = $("#tree").fancytree("getTree");
+    $("#collapse").click(function () {
+        var tree = $("#tree").fancytree("getTree");
 
-    tree.visit(function(node){
-      node.setExpanded(false);
+        tree.visit(function (node) {
+            node.setExpanded(false);
+        });
     });
-});
 
     $("#makeCode").click(function (e) {
         var tree = $("#tree").fancytree("getTree");
@@ -218,32 +217,44 @@ $("#collapse").click(function () {
     $("#makeTree").click(function (e) {
         var treeSource = $("#codeText").val();
         var tocJSON = "";
+        var clean = true;
 
         switch ($("#tocLanguage").val()) {
             case "yaml":
-                treeSource = processYaml(treeSource);
-                var nativeObject = YAML.parse(treeSource);
-                var yamlString = JSON.stringify(nativeObject, null, 4);
+                try {
+                    treeSource = processYaml(treeSource);
+                    var nativeObject = YAML.parse(treeSource);
+                    var yamlString = JSON.stringify(nativeObject, null, 4);
 
-                $("#jsonGenerate").text(yamlString);
+                    $("#jsonGenerate").text(yamlString);
 
-                tocJSON = JSON.parse(yamlString);
+                    tocJSON = JSON.parse(yamlString);
+                } catch (err) {
+                    alert("There was an error with the yaml code." + newline + "Please resolve it and try again.");
+                    clean = false;
+                }
                 break;
             case "markdown":
-                treeSource = processMarkdown(treeSource);
-                console.log("processMarkdown" + newline + treeSource);
-                var nativeObject = YAML.parse(treeSource);
-                var yamlString = JSON.stringify(nativeObject, null, 4);
+                try {
+                    treeSource = processMarkdown(treeSource);
+                    console.log("processMarkdown" + newline + treeSource);
+                    var nativeObject = YAML.parse(treeSource);
+                    var yamlString = JSON.stringify(nativeObject, null, 4);
 
-                $("#jsonGenerate").text(yamlString);
+                    $("#jsonGenerate").text(yamlString);
 
-                tocJSON = JSON.parse(yamlString, null, 4);
-
+                    tocJSON = JSON.parse(yamlString, null, 4);
+                } catch (err) {
+                    alert("There was an problem with your markdown code." + newline + "Please resolve it and try again.");
+                    clean = false;
+                }
                 break;
         }
 
-        $("#tree").fancytree("option", "source", tocJSON);
-        alert(msgTreeUpdated);
+        if (clean) {
+            $("#tree").fancytree("option", "source", tocJSON);
+            alert(msgTreeUpdated);
+        }
 
         function processYaml(yaml) {
             var sOut = "";
@@ -325,6 +336,7 @@ $("#collapse").click(function () {
     });
 
     $("#btnResetSearch").click(function (e) {
+        var tree = $("#tree").fancytree("getTree");
         $("input[name=search]").val("");
         $("span#matches").text("");
         tree.clearFilter();
