@@ -230,7 +230,7 @@ $(function () {
 
                     tocJSON = JSON.parse(yamlString);
                 } catch (err) {
-                    alert("There was an error with the yaml code." + newline + "Please resolve it and try again.");
+                    alert("There was an error with the yaml code." + newline + err + newline + "Please resolve it and try again.");
                     clean = false;
                 }
                 break;
@@ -245,7 +245,7 @@ $(function () {
 
                     tocJSON = JSON.parse(yamlString, null, 4);
                 } catch (err) {
-                    alert("There was an problem with your markdown code." + newline + "Please resolve it and try again.");
+                    alert("There was an problem with your markdown code." + newline + err + newline + "Please resolve it and try again.");
                     clean = false;
                 }
                 break;
