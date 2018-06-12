@@ -262,11 +262,15 @@ $(function () {
             var lines = yaml.split(newline);
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].split(":");
+                var tmpLine = "";
+                for (var j = 1; j <= line.length; j++) {
+                    if (line[j]) tmpLine += ((j > 1) ? ":" : "") + line[j];
+                }
                 switch (line[0].trim()) {
                     case "- name":
                         var spaces = line[0].split("- name");
                         var tmpSpace = spaces[0];
-                        sOut += tmpSpace + "- title: " + line[1] + newline + tmpSpace + "  toc: " + line[1] + newline;
+                        sOut += tmpSpace + "- title: " + tmpLine + newline + tmpSpace + "  toc: " + tmpLine + newline;
                         break;
                     case "items":
                         var spaces = line[0].split("items");
@@ -279,6 +283,8 @@ $(function () {
                         break;
                 }
             }
+
+            console.log(sOut);
 
             return sOut;
         }
