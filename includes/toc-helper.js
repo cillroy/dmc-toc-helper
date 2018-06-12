@@ -186,7 +186,7 @@ $(function () {
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
                 if (val != "root_1" && node.title != "root") {
                     var name = "";
-                    name = node.data['toc'];
+                    name = new String(node.data['toc']);
                     if (name.includes(":")) name = '"' + name + '"';
                     isRoot = false;
                     toc += indent + "- name: " + name + newline;
