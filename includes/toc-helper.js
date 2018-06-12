@@ -306,7 +306,7 @@ $(function () {
                 hashtagCount = lineArr[0].length - 1;
                 spaces = evalIndent(hashtagCount);
 
-                if (inStr.includes("# [")) {
+                if (inStr.includes("# ") && inStr.includes(" [")) {
                     lineArr = inStr.split("[");
                     titleArr = lineArr[1].split("]");
                     title = titleArr[0] + newline;
