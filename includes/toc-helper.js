@@ -185,7 +185,8 @@ $(function () {
                 var indent = addIndents(depth);
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
                 if (val != "root_1" && node.title != "root") {
-                    var name = node.data['toc'];
+                    var name = "";
+                    name = node.data['toc'];
                     if (name.includes(":")) name = '"' + name + '"';
                     isRoot = false;
                     toc += indent + "- name: " + name + newline;
