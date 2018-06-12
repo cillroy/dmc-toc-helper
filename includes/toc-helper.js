@@ -185,8 +185,10 @@ $(function () {
                 var indent = addIndents(depth);
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
                 if (val != "root_1" && node.title != "root") {
+                    var name = node.data['toc'];
+                    if (name.includes(":")) name = '"' + name + '"';
                     isRoot = false;
-                    toc += indent + "- name: " + node.data['toc'] + newline;
+                    toc += indent + "- name: " + name + newline;
                     if (node.data['href']) toc += indent + "  href: " + node.data['href'] + newline;
                     if (node.expanded) toc += indent + "  expanded: " + node.expanded + newline;
                     if (node.children instanceof Object) toc += indent + "  items: " + newline;
@@ -283,8 +285,6 @@ $(function () {
                         break;
                 }
             }
-
-            console.log(sOut);
 
             return sOut;
         }
