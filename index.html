@@ -119,13 +119,11 @@
                     // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type +
-                        newline + "data.node: " + data.node +
-                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
-                        newline + "data.node.data['href']: " + data.node.data['href'] +
-                        newline + "data.node['expanded']:" + data.node['expanded']);
+                    updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
+                        'href'], data.node.data['uid'], data.node['expanded']);
                     $("#nodeTitle").val(data.node.data['toc']);
                     $("#nodeHref").val(data.node.data['href']);
+                    $("#nodeUid").val(data.node.data['uid']);
                     $("#updateNode").attr("disabled", false);
                 },
                 loadChildren: function (event, data) {
@@ -134,32 +132,21 @@
                     data.node.updateCounters();
                 },
                 renderNode: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type +
-                        newline + "data.node: " + data.node +
-                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
-                        newline + "data.node.data['href']: " + data.node.data['href'] +
-                        newline + "data.node['expanded']:" + data.node['expanded']);
+                    updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
+                        'href'], data.node.data['uid'], data.node['expanded']);
                 },
                 expand: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type +
-                        newline + "data.node: " + data.node +
-                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
-                        newline + "data.node.data['href']: " + data.node.data['href'] +
-                        newline + "data.node['expanded']:" + data.node['expanded']);
+                    updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
+                        'href'], data.node.data['uid'], data.node['expanded']);
                 },
                 collapse: function (event, data) {
-                    $("#statusLine").text("event.type: " + event.type +
-                        newline + "data.node: " + data.node +
-                        newline + "data.node.data['toc']: " + data.node.data['toc'] +
-                        newline + "data.node.data['href']: " + data.node.data['href'] +
-                        newline + "data.node['expanded']:" + data.node['expanded']);
+                    updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
+                        'href'], data.node.data['uid'], data.node['expanded']);
                 },
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
 
             var tree = $("#tree").fancytree("getTree");
-
-            $("#showHref")[0].checked = false;
         });
     </script>
 </head>
@@ -185,12 +172,34 @@
                 <input type="checkbox" id="showHref" checked>Show href in title
             </div>
             <div id="edit">
-                <label>Node Title</label>
-                <input type="text" id="nodeTitle" class="editNode" />
-                <label>Node href</label>
-                <input type="text" id="nodeHref" class="editNode" />
-                <button id="updateNode">Update Node</button>
-                <button id="toggleFolder">Toggle Node</button>
+                <h2>Edit Selected Node</h2>
+                <div style="display: flex;">
+                    <div class="editWrapper">
+                        <div>
+                            <label>Node Title</label>
+                            <input type="text" id="nodeTitle" class="editNode" />
+                        </div>
+                        <div>
+                            <label>Node href</label>
+                            <input type="text" id="nodeHref" class="editNode" />
+                        </div>
+                        <div>
+                            <label>Node uid</label>
+                            <input type="text" id="nodeUid" class="editNode" />
+                        </div>
+                    </div>
+                    <div class="editWrapper">
+                        <div>
+                            <button id="updateNode">Update Node</button>
+                        </div>
+                        <div>
+                            <button id="toggleFolder">Toggle Folder Icon</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div id="delete">
                 <button id="delete">Delete Node</button>
             </div>
             <div id="add">
@@ -201,10 +210,18 @@
                 <button id="collapse">Collapse all nodes -</button>
                 <div id="newNode">
                     <h2>ADD NEW NODE</h2>
-                    <label>Node Title</label>
-                    <input type="text" id="newNodeTitle" />
-                    <label>Node href</label>
-                    <input type="text" id="newNodeHref" />
+                    <div>
+                        <label>Node Title</label>
+                        <input type="text" id="newNodeTitle" />
+                    </div>
+                    <div>
+                        <label>Node href</label>
+                        <input type="text" id="newNodeHref" />
+                    </div>
+                    <div>
+                        <label>Node uid</label>
+                        <input type="text" id="newNodeUid" />
+                    </div>
                     <div>
                         <button id="addNode">Add Node</button>
                     </div>
@@ -251,7 +268,6 @@
                 <textarea id="codeText" placeholder="docs.microsoft.com table of contents code goes here..."></textarea>
             </div>
         </div>
-        <div style="float: none;"></div>
     </div>
 </body>
 

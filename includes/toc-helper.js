@@ -2,25 +2,30 @@ var newline = "\n";
 var missingNodeMsg = "No node selected!" + newline + "Please select a node and try again.";
 var msgYamlGenerated = "Table of Contents yaml code was generated." + newline + newline + "You will need to save this as a .yml file.";
 var msgTreeUpdated = "Table of Content updated from code";
+var codeTextDefaultText = "Please enter your docs table of content here...";
 var jsonSource = [{
         title: "Node 1",
         toc: "Node 1",
-        href: "node1.md"
+        href: "node1.md",
+        uid: "uid1"
     },
     {
         title: "Folder 2",
         toc: "Folder 2",
         href: "node2.md",
+        uid: "uid2",
         "folder": true,
         "children": [{
                 title: "Node 2.1",
                 toc: "Node 2.1",
-                href: "node2.1.md"
+                href: "node2.1.md",
+                uid: "uid2.1"
             },
             {
                 title: "Node 2.2",
                 toc: "Node 2.2",
-                href: "node2.2.md"
+                href: "node2.2.md",
+                uid: "uid2.2"
             }
         ]
     },
@@ -28,11 +33,13 @@ var jsonSource = [{
         title: "Folder 3",
         toc: "Folder 3",
         href: "node3.md",
+        uid: "uid3",
         "folder": true,
         "children": [{
             title: "Node 3.1",
             toc: "Node 3.1",
-            href: "node3.1.md"
+            href: "node3.1.md",
+            uid: "uid3.1"
         }]
     }
 ];
@@ -95,10 +102,36 @@ function checkParemeterExists(parameter) {
     return false;
 }
 
+function updateActiveNode(event, node, toc, href, uid, expanded) {
+    //var node = $("#tree").fancytree("getActiveNode");
+    $("#statusLine").text("event.type: " + event +
+        newline + "data.node: " + node +
+        newline + "data.node.data['toc']: " + toc +
+        newline + "data.node.data['href']: " + href +
+        newline + "data.node.data['uid']: " + uid +
+        newline + "data.node['expanded']:" + expanded);
+}
+
+function clearEditFields() {
+    $("#nodeTitle").val("");
+    $("#nodeHref").val("");
+    $("#nodeUid").val("");
+}
+
+function clearNewFields() {
+    $("#newNodeTitle").val("");
+    $("#newNodeHref").val("");
+    $("#newNodeUid").val("");
+}
+
 $(function () {
     if (checkParemeterExists("debug")) {
         $("#debug").show()
     }
+
+    $("#showHref")[0].checked = true;
+    $("#codeText").attr("placeholder",codeTextDefaultText);
+
 
     $("#copy").click(function (e) {
         //var copyTextarea = document.querySelector('codeText');
@@ -115,11 +148,14 @@ $(function () {
             console.log('Copying text command was ' + msg);
             alert('Oops, unable to copy');
         }
-    })
+    });
 
     $("#reset").click(function (e) {
         $("#tree").fancytree("option", "source", jsonSource);
-        $("#codeText").val(" ");
+        $("#codeText").val("");
+        $("#codeText").attr("placeholder",codeTextDefaultText);
+        clearEditFields();
+        clearNewFields();
         manageNodeTitles();
     });
 
@@ -191,6 +227,7 @@ $(function () {
                     isRoot = false;
                     toc += indent + "- name: " + name + newline;
                     if (node.data['href']) toc += indent + "  href: " + node.data['href'] + newline;
+                    if (node.data['uid']) toc += indent + "  uid: " + node.data['uid'] + newline;
                     if (node.expanded) toc += indent + "  expanded: " + node.expanded + newline;
                     if (node.children instanceof Object) toc += indent + "  items: " + newline;
                 }
@@ -255,6 +292,7 @@ $(function () {
         }
 
         if (clean) {
+            clearEditFields();
             $("#tree").fancytree("option", "source", tocJSON);
             alert(msgTreeUpdated);
         }
@@ -354,13 +392,13 @@ $(function () {
         var node = $("#tree").fancytree("getActiveNode");
         node.data['href'] = $("#nodeHref").val();
         node.data['toc'] = $("#nodeTitle").val();
+        node.data['uid'] = $("#nodeUid").val();
         node.title = $("#nodeTitle").val() + titleFormat($("#nodeHref").val());
+
         node.renderTitle();
 
-        $("#statusLine").text("event.type: " + e.type + "\r\ndata.node: " + node +
-            "\r\ndata.node.data['toc']: " + node.data['toc'] +
-            "\r\ndata.node.data['href']: " + node.data['href'] +
-            "\r\ndata.node['expanded']:" + node['expanded']);
+        updateActiveNode(event.type, node, node.data['toc'], node.data['href'], node.data['uid'], node['expanded']);
+
     }).attr("disabled", true);
 
     $("#toggleFolder").click(function (e) {
@@ -374,11 +412,13 @@ $(function () {
     });
 
     $("#delete").click(function (e) {
-        var activeNode = $("#tree").fancytree("getActiveNode");
-        if (activeNode) {
-            activeNode.remove();
-        } else {
-            alert(missingNodeMsg);
+        if (confirm('Are you sure you want to delete this node and all children nodes?')) {
+            var activeNode = $("#tree").fancytree("getActiveNode");
+            if (activeNode) {
+                activeNode.remove();
+            } else {
+                alert(missingNodeMsg);
+            }
         }
     });
 
@@ -417,18 +457,17 @@ $(function () {
         var node = $("#tree").fancytree("getActiveNode");
         if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
         node.folder = true;
-
         node.addChildren({
             title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
+            toc: $("#newNodeTitle").val(),
             href: $("#newNodeHref").val(),
-            toc: $("#newNodeTitle").val()
+            uid: $("#newNodeUid").val()
         });
 
         node.setExpanded();
         node.render();
-        //$("#tree").fancytree("getTree").activateKey(node.key);
-        $("#newNodeTitle").val("");
-        $("#newNodeHref").val("");
+
+        clearNewFields();
     });
 
     $("#activeNode").click(function (e) {
