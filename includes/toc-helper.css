@@ -46,8 +46,12 @@ button:hover {
 
 #edit {
     margin-top: 10px;
-    text-align: center;
+    padding-left: 10px;
     background-color: lightblue;
+}
+
+#editTopLevel {
+    text-align: center;
 }
 
 .editWrapper {
