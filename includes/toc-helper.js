@@ -448,6 +448,11 @@ $(function () {
 
     $("#showHref").prop('checked', true);
 
+    $("#buttonEdit").click(function (e) {
+        $("span", this).text("Edit Node [" + (($("#editTopLevel").is(":hidden")) ? "-" : "+") + "]");
+        $("#editTopLevel").toggle();
+    });
+
     $("#createNode").click(function (e) {
         $("span", this).text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
         $("#newNode").toggle();

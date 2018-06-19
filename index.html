@@ -172,28 +172,33 @@
                 <input type="checkbox" id="showHref" checked>Show href in title
             </div>
             <div id="edit">
-                <h2>Edit Selected Node</h2>
-                <div style="display: flex;">
-                    <div class="editWrapper">
-                        <div>
-                            <label>Node Title</label>
-                            <input type="text" id="nodeTitle" class="editNode" />
+                <button id="buttonEdit">
+                    <span>Edit Node [-]</span>
+                </button>
+                <div id="editTopLevel">
+                    <h2>Edit Selected Node</h2>
+                    <div style="display: flex;">
+                        <div class="editWrapper">
+                            <div>
+                                <label>Node Title</label>
+                                <input type="text" id="nodeTitle" class="editNode" />
+                            </div>
+                            <div>
+                                <label>Node href</label>
+                                <input type="text" id="nodeHref" class="editNode" />
+                            </div>
+                            <div>
+                                <label>Node uid</label>
+                                <input type="text" id="nodeUid" class="editNode" />
+                            </div>
                         </div>
-                        <div>
-                            <label>Node href</label>
-                            <input type="text" id="nodeHref" class="editNode" />
-                        </div>
-                        <div>
-                            <label>Node uid</label>
-                            <input type="text" id="nodeUid" class="editNode" />
-                        </div>
-                    </div>
-                    <div class="editWrapper">
-                        <div>
-                            <button id="updateNode">Update Node</button>
-                        </div>
-                        <div>
-                            <button id="toggleFolder">Toggle Folder Icon</button>
+                        <div class="editWrapper">
+                            <div>
+                                <button id="updateNode">Update Node</button>
+                            </div>
+                            <div>
+                                <button id="toggleFolder">Toggle Folder Icon</button>
+                            </div>
                         </div>
                     </div>
                 </div>
