@@ -78,7 +78,7 @@ function manageNodeTitles() {
     }
 }
 
-function checkParemeterExists(parameter) {
+function checkParameterExists(parameter) {
     //Get Query String from url
     fullQString = window.location.search.substring(1);
 
@@ -125,23 +125,23 @@ function clearNewFields() {
 }
 
 $(function () {
-    if (checkParemeterExists("debug")) {
-        $("#debug").show()
+    if (checkParameterExists("debug")) {
+        $("#debug").show();
     }
 
     $("#showHref")[0].checked = true;
     $("#codeText").attr("placeholder", codeTextDefaultText);
-
 
     $("#copy").click(function (e) {
         //var copyTextarea = document.querySelector('codeText');
         var copyTextarea = document.getElementById("codeText");
         copyTextarea.focus();
         copyTextarea.select();
+        var msg;
 
         try {
             var successful = document.execCommand('copy');
-            var msg = successful ? 'successful' : 'unsuccessful';
+            msg = successful ? 'successful' : 'unsuccessful';
             console.log('Copying text command was ' + msg);
             alert("Table of Contents was copied." + newline + newline + "You will need to save this as a .yml file.");
         } catch (err) {
@@ -222,7 +222,7 @@ $(function () {
                 var node = $("#tree").fancytree("getTree").getNodeByKey(val);
                 if (val != "root_1" && node.title != "root") {
                     var name = "";
-                    name = new String(node.data['toc']);
+                    name = String(node.data['toc']);
                     if (name.includes(":")) name = '"' + name + '"';
                     isRoot = false;
                     toc += indent + "- name: " + name + newline;
@@ -258,13 +258,15 @@ $(function () {
         var treeSource = $("#codeText").val();
         var tocJSON = "";
         var clean = true;
+        var nativeObject;
+        var yamlString;
 
         switch ($("#tocLanguage").val()) {
             case "yaml":
                 try {
                     treeSource = processYaml(treeSource);
-                    var nativeObject = YAML.parse(treeSource);
-                    var yamlString = JSON.stringify(nativeObject, null, 4);
+                    nativeObject = YAML.parse(treeSource);
+                    yamlString = JSON.stringify(nativeObject, null, 4);
 
                     $("#jsonGenerate").text(yamlString);
 
@@ -278,8 +280,8 @@ $(function () {
                 try {
                     treeSource = processMarkdown(treeSource);
                     console.log("processMarkdown" + newline + treeSource);
-                    var nativeObject = YAML.parse(treeSource);
-                    var yamlString = JSON.stringify(nativeObject, null, 4);
+                    nativeObject = YAML.parse(treeSource);
+                    yamlString = JSON.stringify(nativeObject, null, 4);
 
                     $("#jsonGenerate").text(yamlString);
 
@@ -307,15 +309,17 @@ $(function () {
                 for (var j = 1; j <= line.length; j++) {
                     if (line[j]) tmpLine += ((j > 1) ? ":" : "") + line[j];
                 }
+                var spaces;
+                var tmpSpace;
                 switch (line[0].trim()) {
                     case "- name":
-                        var spaces = line[0].split("- name");
-                        var tmpSpace = spaces[0];
+                        spaces = line[0].split("- name");
+                        tmpSpace = spaces[0];
                         sOut += tmpSpace + "- title: " + tmpLine + newline + tmpSpace + "  toc: " + tmpLine + newline;
                         break;
                     case "items":
-                        var spaces = line[0].split("items");
-                        var tmpSpace = spaces[0];
+                        spaces = line[0].split("items");
+                        tmpSpace = spaces[0];
                         sOut += tmpSpace + "folder: true" + newline;
                         sOut += tmpSpace + "children: " + newline;
                         break;
@@ -386,8 +390,6 @@ $(function () {
         $("span#matches").text("");
         tree.clearFilter();
     }).attr("disabled", true);
-
-    /* DO I SET FOCUS ON NEW NODE OR KEEP FOCUS ON ACTIVE NODE? */
     $("#updateNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         node.data['href'] = $("#nodeHref").val();
@@ -463,6 +465,7 @@ $(function () {
         $("#newNode").toggle();
     });
 
+    /* DO I SET FOCUS ON NEW NODE OR KEEP FOCUS ON ACTIVE NODE? */
     $("#addNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
         if (!node || node === "undefined") node = $("#tree").fancytree("getRootNode");
