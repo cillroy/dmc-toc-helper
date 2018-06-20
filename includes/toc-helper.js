@@ -453,6 +453,11 @@ $(function () {
         $("#editTopLevel").toggle();
     });
 
+    $("#menu").click(function (e) {
+        $("span", this).text("Manage Tree [" + (($("#menuNav").is(":hidden")) ? "-" : "+") + "]");
+        $("#menuNav").toggle();
+    });
+
     $("#createNode").click(function (e) {
         $("span", this).text("Create Node [" + (($("#newNode").is(":hidden")) ? "-" : "+") + "]");
         $("#newNode").toggle();

@@ -33,6 +33,15 @@ button:hover {
     width: 95%;
 }
 
+.menunav {
+    display: none;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 20px;
+}
+
 #tree {
     padding: 20px 0px 20px;
 }
@@ -96,7 +105,7 @@ button:hover {
     display: none;
 }
 
-#newNode > div {
+#newNode>div {
     padding: 20px;
 }
 

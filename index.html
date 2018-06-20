@@ -155,10 +155,9 @@
     <div id="container">
         <div id="treeWrapper">
             <div class="buttonWrapper">
+                <button id="menu"><span>Manage Tree [+]</span></button>
                 <button id="makeCode">Tree &gt; Code (generate YAML)</button>
-            </div>
-            <div id="resetWrapper">
-                <button id="reset">Reset</button>
+                <button id="reset">Reset to Sample Data</button>
             </div>
             <div id="filterWrapper">
                 <label>Filter</label>
@@ -166,69 +165,71 @@
                 <button id="btnResetSearch" disabled="true">&times;</button>
                 <span id="matches"></span>
             </div>
-            <div id="manage">
-                <button id="sortTree">Sort Tree</button>
-                <button id="sortBranch">Sort Branch</button>
-                <input type="checkbox" id="showHref" checked>Show href in title
-            </div>
-            <div id="edit">
-                <button id="buttonEdit">
-                    <span>Edit Node [-]</span>
-                </button>
-                <div id="editTopLevel">
-                    <h2>Edit Selected Node</h2>
-                    <div style="display: flex;">
-                        <div class="editWrapper">
-                            <div>
-                                <label>Node Title</label>
-                                <input type="text" id="nodeTitle" class="editNode" />
-                            </div>
-                            <div>
-                                <label>Node href</label>
-                                <input type="text" id="nodeHref" class="editNode" />
-                            </div>
-                            <div>
-                                <label>Node uid</label>
-                                <input type="text" id="nodeUid" class="editNode" />
-                            </div>
-                        </div>
-                        <div class="editWrapper">
-                            <div>
-                                <button id="updateNode">Update Node</button>
-                            </div>
-                            <div>
-                                <button id="toggleFolder">Toggle Folder Icon</button>
-                            </div>
-                        </div>
-                    </div>
+            <div id="menuNav" class="menunav">
+                <div id="manage">
+                    <button id="sortTree">Sort Tree</button>
+                    <button id="sortBranch">Sort Branch</button>
+                    <input type="checkbox" id="showHref" checked>Show href in title
                 </div>
-                <div class="clear"></div>
-            </div>
-            <div id="delete">
-                <button id="delete">Delete Node</button>
-            </div>
-            <div id="add">
-                <button id="createNode">
-                    <span id="createNodeSpan">Create Node [+]</span>
-                </button>
-                <button id="expand">Expand all nodes +</button>
-                <button id="collapse">Collapse all nodes -</button>
-                <div id="newNode">
-                    <h2>ADD NEW NODE</h2>
-                    <div>
-                        <label>Node Title</label>
-                        <input type="text" id="newNodeTitle" />
+                <div id="edit">
+                    <button id="buttonEdit">
+                        <span>Edit Node [-]</span>
+                    </button>
+                    <div id="editTopLevel">
+                        <h2>Edit Selected Node</h2>
+                        <div style="display: flex;">
+                            <div class="editWrapper">
+                                <div>
+                                    <label>Node Title</label>
+                                    <input type="text" id="nodeTitle" class="editNode" />
+                                </div>
+                                <div>
+                                    <label>Node href</label>
+                                    <input type="text" id="nodeHref" class="editNode" />
+                                </div>
+                                <div>
+                                    <label>Node uid</label>
+                                    <input type="text" id="nodeUid" class="editNode" />
+                                </div>
+                            </div>
+                            <div class="editWrapper">
+                                <div>
+                                    <button id="updateNode">Update Node</button>
+                                </div>
+                                <div>
+                                    <button id="toggleFolder">Toggle Folder Icon</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label>Node href</label>
-                        <input type="text" id="newNodeHref" />
-                    </div>
-                    <div>
-                        <label>Node uid</label>
-                        <input type="text" id="newNodeUid" />
-                    </div>
-                    <div>
-                        <button id="addNode">Add Node</button>
+                    <div class="clear"></div>
+                </div>
+                <div id="delete">
+                    <button id="delete">Delete Node</button>
+                </div>
+                <div id="add">
+                    <button id="createNode">
+                        <span id="createNodeSpan">Create Node [+]</span>
+                    </button>
+                    <button id="expand">Expand all nodes +</button>
+                    <button id="collapse">Collapse all nodes -</button>
+                    <div id="newNode">
+                        <h2>ADD NEW NODE</h2>
+                        <div>
+                            <label>Node Title</label>
+                            <input type="text" id="newNodeTitle" />
+                        </div>
+                        <div>
+                            <label>Node href</label>
+                            <input type="text" id="newNodeHref" />
+                        </div>
+                        <div>
+                            <label>Node uid</label>
+                            <input type="text" id="newNodeUid" />
+                        </div>
+                        <div>
+                            <button id="addNode">Add Node</button>
+                        </div>
                     </div>
                 </div>
             </div>
