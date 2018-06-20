@@ -130,7 +130,7 @@ $(function () {
     }
 
     $("#showHref")[0].checked = true;
-    $("#codeText").attr("placeholder",codeTextDefaultText);
+    $("#codeText").attr("placeholder", codeTextDefaultText);
 
 
     $("#copy").click(function (e) {
@@ -153,7 +153,7 @@ $(function () {
     $("#reset").click(function (e) {
         $("#tree").fancytree("option", "source", jsonSource);
         $("#codeText").val("");
-        $("#codeText").attr("placeholder",codeTextDefaultText);
+        $("#codeText").attr("placeholder", codeTextDefaultText);
         clearEditFields();
         clearNewFields();
         manageNodeTitles();
@@ -412,13 +412,13 @@ $(function () {
     });
 
     $("#delete").click(function (e) {
-        if (confirm('Are you sure you want to delete this node and all children nodes?')) {
-            var activeNode = $("#tree").fancytree("getActiveNode");
-            if (activeNode) {
+        var activeNode = $("#tree").fancytree("getActiveNode");
+        if (activeNode) {
+            if (confirm('Are you sure you want to delete this node and all children nodes?')) {
                 activeNode.remove();
-            } else {
-                alert(missingNodeMsg);
             }
+        } else {
+            alert(missingNodeMsg);
         }
     });
 

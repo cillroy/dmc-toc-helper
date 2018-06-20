@@ -46,11 +46,16 @@ button:hover {
     padding: 20px 0px 20px;
 }
 
-#treeWrapper,
+#treeWrapper {
+    float: left;
+    padding: 20px;
+    width: 55%;
+}
+
 #codeWrapper {
     float: left;
     padding: 20px;
-    width: 45%;
+    width: 35%;
 }
 
 #edit {
