@@ -119,11 +119,18 @@
                     // levelOfs: "32px"     // Adjust this if ul padding != "16px"
                 },
                 activate: function (event, data) {
+                    var maintainContext;
+                    if (data.node.data['maintainContext']) {
+                        maintainContext = String(data.node.data['maintainContext']).toLowerCase();
+                    }
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded']);
+                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
+                        'displayName'], maintainContext);
                     $("#nodeTitle").val(data.node.data['toc']);
+                    $("#nodeSearch").val(data.node.data['displayName']);
                     $("#nodeHref").val(data.node.data['href']);
                     $("#nodeUid").val(data.node.data['uid']);
+                    $("#nodeMaintainContext")[0].checked = (maintainContext == 'true');
                     $("#updateNode").attr("disabled", false);
                 },
                 loadChildren: function (event, data) {
@@ -133,15 +140,18 @@
                 },
                 renderNode: function (event, data) {
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded']);
+                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
+                        'displayName'], data.node.data['maintainContext']);
                 },
                 expand: function (event, data) {
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded']);
+                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
+                        'displayName'], data.node.data['maintainContext']);
                 },
                 collapse: function (event, data) {
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded']);
+                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
+                        'displayName'], data.node.data['maintainContext']);
                 },
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
@@ -155,7 +165,9 @@
     <div id="container">
         <div id="treeWrapper">
             <div class="buttonWrapper">
-                <button id="menu"><span>Manage Tree [+]</span></button>
+                <button id="menu">
+                    <span>Manage Tree [+]</span>
+                </button>
                 <button id="makeCode">Tree &gt; Code (generate YAML)</button>
                 <button id="reset">Reset to Sample Data</button>
             </div>
@@ -184,12 +196,20 @@
                                     <input type="text" id="nodeTitle" class="editNode" />
                                 </div>
                                 <div>
+                                    <label>Additional Terms</label>
+                                    <input type="text" id="nodeSearch" class="editNode" />
+                                </div>
+                                <div>
                                     <label>Node href</label>
                                     <input type="text" id="nodeHref" class="editNode" />
                                 </div>
                                 <div>
                                     <label>Node uid</label>
                                     <input type="text" id="nodeUid" class="editNode" />
+                                </div>
+                                <div>
+                                    <label>Maintain Context for Shared ToC</label>
+                                    <input type="checkbox" id="nodeMaintainContext" class="editNode" />
                                 </div>
                             </div>
                             <div class="editWrapper">
@@ -218,8 +238,16 @@
                             <input type="text" id="newNodeTitle" />
                         </div>
                         <div>
+                            <label>Additional Terms</label>
+                            <input type="text" id="newNodeSearch" />
+                        </div>
+                        <div>
                             <label>Node href</label>
                             <input type="text" id="newNodeHref" />
+                        </div>
+                        <div>
+                            <label>Maintain ToC Context</label>
+                            <input type="checkbox" id="newNodeMaintainContext" />
                         </div>
                         <div>
                             <label>Node uid</label>

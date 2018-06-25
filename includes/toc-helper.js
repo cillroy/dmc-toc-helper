@@ -6,7 +6,9 @@ var codeTextDefaultText = "Please enter your docs table of content here...";
 var jsonSource = [{
         title: "Node 1",
         toc: "Node 1",
+        displayName: "node.1",
         href: "node1.md",
+        maintainContext: true,
         uid: "uid1"
     },
     {
@@ -102,11 +104,12 @@ function checkParameterExists(parameter) {
     return false;
 }
 
-function updateActiveNode(event, node, toc, href, uid, expanded) {
-    //var node = $("#tree").fancytree("getActiveNode");
+function updateActiveNode(event, node, toc, href, uid, expanded, displayName, maintainContext) {
     $("#statusLine").text("event.type: " + event +
         newline + "data.node: " + node +
+        newline + "data.node.data['displayName']: " + displayName +
         newline + "data.node.data['toc']: " + toc +
+        newline + "data.node.data['maintainContext']: " + maintainContext +
         newline + "data.node.data['href']: " + href +
         newline + "data.node.data['uid']: " + uid +
         newline + "data.node['expanded']:" + expanded);
@@ -114,13 +117,17 @@ function updateActiveNode(event, node, toc, href, uid, expanded) {
 
 function clearEditFields() {
     $("#nodeTitle").val("");
+    $("#nodeSearch").val("");
     $("#nodeHref").val("");
+    $("#nodeMaintainContext")[0].checked = false;
     $("#nodeUid").val("");
 }
 
 function clearNewFields() {
     $("#newNodeTitle").val("");
+    $("#newNodeSearch").val("");
     $("#newNodeHref").val("");
+    $("#newNodeMaintainContext")[0].checked = false;
     $("#newNodeUid").val("");
 }
 
@@ -226,7 +233,9 @@ $(function () {
                     if (name.includes(":")) name = '"' + name + '"';
                     isRoot = false;
                     toc += indent + "- name: " + name + newline;
+                    if (node.data['displayName']) toc += indent + "  displayName: " + node.data['displayName'] + newline;
                     if (node.data['href']) toc += indent + "  href: " + node.data['href'] + newline;
+                    if (node.data['maintainContext']) toc += indent + "  maintainContext: " + node.data['maintainContext'] + newline;
                     if (node.data['uid']) toc += indent + "  uid: " + node.data['uid'] + newline;
                     if (node.expanded) toc += indent + "  expanded: " + node.expanded + newline;
                     if (node.children instanceof Object) toc += indent + "  items: " + newline;
@@ -390,16 +399,19 @@ $(function () {
         $("span#matches").text("");
         tree.clearFilter();
     }).attr("disabled", true);
+
     $("#updateNode").click(function (e) {
         var node = $("#tree").fancytree("getActiveNode");
-        node.data['href'] = $("#nodeHref").val();
         node.data['toc'] = $("#nodeTitle").val();
+        node.data['displayName'] = $('#nodeSearch').val();
+        node.data['href'] = $("#nodeHref").val();
+        node.data['maintainContext'] = $('#nodeMaintainContext')[0].checked;
         node.data['uid'] = $("#nodeUid").val();
         node.title = $("#nodeTitle").val() + titleFormat($("#nodeHref").val());
 
         node.renderTitle();
 
-        updateActiveNode(event.type, node, node.data['toc'], node.data['href'], node.data['uid'], node['expanded']);
+        updateActiveNode(e.type, node, node.data['toc'], node.data['href'], node.data['uid'], node['expanded'], node.data['displayName'], node.data['maintainContext']);
 
     }).attr("disabled", true);
 
@@ -473,7 +485,9 @@ $(function () {
         node.addChildren({
             title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
             toc: $("#newNodeTitle").val(),
+            displayName: $("#newNodeDisplayName").val(),
             href: $("#newNodeHref").val(),
+            maintainContext: $("#newMaintainContext").val(),
             uid: $("#newNodeUid").val()
         });
 
