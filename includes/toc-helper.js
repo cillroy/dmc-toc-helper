@@ -485,7 +485,7 @@ $(function () {
         node.addChildren({
             title: $("#newNodeTitle").val() + titleFormat($("#newNodeHref").val()),
             toc: $("#newNodeTitle").val(),
-            displayName: $("#newNodeDisplayName").val(),
+            displayName: $("#newNodeSearch").val(),
             href: $("#newNodeHref").val(),
             maintainContext: $("#newNodeMaintainContext")[0].checked,
             uid: $("#newNodeUid").val()
