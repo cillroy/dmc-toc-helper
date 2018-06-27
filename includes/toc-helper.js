@@ -487,7 +487,7 @@ $(function () {
             toc: $("#newNodeTitle").val(),
             displayName: $("#newNodeDisplayName").val(),
             href: $("#newNodeHref").val(),
-            maintainContext: $("#newMaintainContext").val(),
+            maintainContext: $("#newNodeMaintainContext")[0].checked,
             uid: $("#newNodeUid").val()
         });
 
