@@ -176,12 +176,18 @@
                 <input name="search" placeholder="search nodes..." autocomplete="off">
                 <button id="btnResetSearch" disabled="true">&times;</button>
                 <span id="matches"></span>
-                <input type="checkbox" id="showHref" checked>Show href in title
+                <input type="checkbox" id="showHref" checked> Show href in title
             </div>
             <div id="menuNav" class="menunav">
                 <div id="nodeSorting">
                     <button id="sortTree">Sort Tree</button>
                     <button id="sortBranch">Sort Branch</button>
+                </div>
+                <div id="experiment">
+                    Use Experimentation
+                    <input type="checkbox" id="experiment_checkbox">
+                    <label>Experimentation Id</label>
+                    <input type="text" id="experiment_id" class="editNode" />
                 </div>
                 <div id="edit">
                     <button id="buttonEdit">

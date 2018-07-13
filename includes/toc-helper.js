@@ -3,6 +3,7 @@ var missingNodeMsg = "No node selected!" + newline + "Please select a node and t
 var msgYamlGenerated = "Table of Contents yaml code was generated." + newline + newline + "You will need to save this as a .yml file.";
 var msgTreeUpdated = "Table of Content updated from code";
 var codeTextDefaultText = "Please enter your docs table of content here...";
+var metaDataTemplate = 'metadata:' + newline + '  experimental: experiment_checkbox' + newline + '  experiment_id: "experiment_value"' + newline + 'items:' + newline;
 var jsonSource = [{
         title: "Node 1",
         toc: "Node 1",
@@ -215,6 +216,9 @@ $(function () {
         var tree = $("#tree").fancytree("getTree");
         var treeCode = tree.toDict(true);
         var toc = "";
+        var experimentDepth = 0;
+
+        toc = evalExperiment();
 
         $.each(treeCode, function (key, val) {
             recursiveFunction(key, val);
@@ -222,6 +226,16 @@ $(function () {
 
         var tmpExpand = "";
         var isRoot = true;
+
+        function evalExperiment() {
+            strOut = "";
+            if ($('#experiment_checkbox')[0].checked || $('#experiment_id').val().trim().length > 0) {
+                experimentDepth = 2;
+                strOut = metaDataTemplate.replace("experiment_checkbox", $('#experiment_checkbox')[0].checked);
+                strOut = strOut.replace("experiment_value", $('#experiment_id').val());
+            }
+            return strOut;
+        }
 
         function recursiveFunction(key, val, depth = -2, tmpStr = "") {
             if (key == "key") {
@@ -253,7 +267,7 @@ $(function () {
 
         function addIndents(count) {
             strOut = "";
-            for (var i = 0; i < count; i++) strOut += "  ";
+            for (var i = 0; i < count + experimentDepth; i++) strOut += "  ";
             return strOut;
         }
 
