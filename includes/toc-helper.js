@@ -116,6 +116,11 @@ function updateActiveNode(event, node, toc, href, uid, expanded, displayName, ma
         newline + "data.node['expanded']:" + expanded);
 }
 
+function clearExperimentFields() {
+    $('#experiment_checkbox')[0].checked = false;
+    $('#experiment_id').val("");
+}
+
 function clearEditFields() {
     $("#nodeTitle").val("");
     $("#nodeSearch").val("");
@@ -164,6 +169,7 @@ $(function () {
         $("#codeText").attr("placeholder", codeTextDefaultText);
         clearEditFields();
         clearNewFields();
+        clearExperimentFields();
         manageNodeTitles();
     });
 
@@ -284,6 +290,8 @@ $(function () {
         var nativeObject;
         var yamlString;
 
+        clearExperimentFields();
+
         switch ($("#tocLanguage").val()) {
             case "yaml":
                 try {
@@ -335,6 +343,12 @@ $(function () {
                 var spaces;
                 var tmpSpace;
                 switch (line[0].trim()) {
+                    case "experimental":
+                        $('#experiment_checkbox')[0].checked = (tmpLine.trim() == 'true');
+                        break;
+                    case "experiment_id":
+                        $('#experiment_id').val(tmpLine.trim().substring(1, tmpLine.trim().length - 1));
+                        break;
                     case "- name":
                         spaces = line[0].split("- name");
                         tmpSpace = spaces[0];
