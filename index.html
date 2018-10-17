@@ -124,12 +124,15 @@
                         maintainContext = String(data.node.data['maintainContext']).toLowerCase();
                     }
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
-                        'displayName'], maintainContext);
+                            'href'], data.node.data['uid'], data.node.data['tocHref'], data.node
+                        .data['topicHref'], data.node['expanded'], data.node.data[
+                            'displayName'], maintainContext);
                     $("#nodeTitle").val(data.node.data['toc']);
                     $("#nodeSearch").val(data.node.data['displayName']);
                     $("#nodeHref").val(data.node.data['href']);
                     $("#nodeUid").val(data.node.data['uid']);
+                    $("#nodeToCHref").val(data.node.data['tocHref']);
+                    $("#nodeTopicHref").val(data.node.data['topicHref']);
                     $("#nodeMaintainContext")[0].checked = (maintainContext == 'true');
                     $("#updateNode").attr("disabled", false);
                 },
@@ -140,18 +143,21 @@
                 },
                 renderNode: function (event, data) {
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
-                        'displayName'], data.node.data['maintainContext']);
+                            'href'], data.node.data['uid'], data.node.data['tocHref'], data.node
+                        .data['topicHref'], data.node['expanded'], data.node.data[
+                            'displayName'], data.node.data['maintainContext']);
                 },
                 expand: function (event, data) {
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
-                        'displayName'], data.node.data['maintainContext']);
+                            'href'], data.node.data['uid'], data.node.data['tocHref'], data.node
+                        .data['topicHref'], data.node['expanded'], data.node.data[
+                            'displayName'], data.node.data['maintainContext']);
                 },
                 collapse: function (event, data) {
                     updateActiveNode(event.type, data.node, data.node.data['toc'], data.node.data[
-                        'href'], data.node.data['uid'], data.node['expanded'], data.node.data[
-                        'displayName'], data.node.data['maintainContext']);
+                            'href'], data.node.data['uid'], data.node.data['tocHref'], data.node
+                        .data['topicHref'], data.node['expanded'], data.node.data[
+                            'displayName'], data.node.data['maintainContext']);
                 },
             });
             // Note: Loading and initialization may be asynchronous, so the nodes may not be accessible yet.
@@ -214,6 +220,14 @@
                                     <input type="text" id="nodeUid" class="editNode" />
                                 </div>
                                 <div>
+                                    <label>ToC Href</label>
+                                    <input type="text" id="nodeToCHref" class="editNode" />
+                                </div>
+                                <div>
+                                    <label>Topic Href</label>
+                                    <input type="text" id="nodeTopicHref" class="editNode" />
+                                </div>
+                                <div>
                                     <label>Maintain Context for Shared ToC</label>
                                     <input type="checkbox" id="nodeMaintainContext" class="editNode" />
                                 </div>
@@ -252,12 +266,20 @@
                             <input type="text" id="newNodeHref" />
                         </div>
                         <div>
-                            <label>Maintain ToC Context</label>
-                            <input type="checkbox" id="newNodeMaintainContext" />
-                        </div>
-                        <div>
                             <label>Node uid</label>
                             <input type="text" id="newNodeUid" />
+                        </div>
+                        <div>
+                            <label>ToC Href</label>
+                            <input type="text" id="newNodeToCHref" />
+                        </div>
+                        <div>
+                            <label>Topic Href</label>
+                            <input type="text" id="newNodeTopicHref" />
+                        </div>
+                        <div>
+                            <label>Maintain ToC Context</label>
+                            <input type="checkbox" id="newNodeMaintainContext" />
                         </div>
                         <div>
                             <button id="addNode">Add Node</button>

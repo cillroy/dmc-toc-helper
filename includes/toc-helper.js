@@ -9,8 +9,10 @@ var jsonSource = [{
         toc: "Node 1",
         displayName: "node.1",
         href: "node1.md",
-        maintainContext: true,
-        uid: "uid1"
+        uid: "uid1",
+        tocHref: "/",
+        topicHref: "/",
+        maintainContext: true
     },
     {
         title: "Folder 2",
@@ -105,7 +107,7 @@ function checkParameterExists(parameter) {
     return false;
 }
 
-function updateActiveNode(event, node, toc, href, uid, expanded, displayName, maintainContext) {
+function updateActiveNode(event, node, toc, href, uid, expanded, displayName, tocHref, topicHref, maintainContext) {
     $("#statusLine").text("event.type: " + event +
         newline + "data.node: " + node +
         newline + "data.node.data['displayName']: " + displayName +
@@ -113,6 +115,8 @@ function updateActiveNode(event, node, toc, href, uid, expanded, displayName, ma
         newline + "data.node.data['maintainContext']: " + maintainContext +
         newline + "data.node.data['href']: " + href +
         newline + "data.node.data['uid']: " + uid +
+        newline + "data.node.data['tocHref']: " + tocHref +
+        newline + "data.node.data['topicHref']: " + topicHref +
         newline + "data.node['expanded']:" + expanded);
 }
 
@@ -125,16 +129,20 @@ function clearEditFields() {
     $("#nodeTitle").val("");
     $("#nodeSearch").val("");
     $("#nodeHref").val("");
-    $("#nodeMaintainContext")[0].checked = false;
     $("#nodeUid").val("");
+    $("#nodeToCHref").val("");
+    $("#nodeTopicHref").val("");
+    $("#nodeMaintainContext")[0].checked = false;
 }
 
 function clearNewFields() {
     $("#newNodeTitle").val("");
     $("#newNodeSearch").val("");
     $("#newNodeHref").val("");
-    $("#newNodeMaintainContext")[0].checked = false;
     $("#newNodeUid").val("");
+    $("#newNodeToCHref").val("");
+    $("#newNodeTopicHref").val("");
+    $("#nodeMaintainContext")[0].checked = false;
 }
 
 $(function () {
@@ -257,6 +265,8 @@ $(function () {
                     if (node.data['href']) toc += indent + "  href: " + node.data['href'] + newline;
                     if (node.data['maintainContext']) toc += indent + "  maintainContext: " + node.data['maintainContext'] + newline;
                     if (node.data['uid']) toc += indent + "  uid: " + node.data['uid'] + newline;
+                    if (node.data['tocHref']) toc += indent + "  tocHref: " + node.data['tocHref'] + newline;
+                    if (node.data['topicHref']) toc += indent + "  topicHref: " + node.data['topicHref'] + newline;
                     if (node.expanded) toc += indent + "  expanded: " + node.expanded + newline;
                     if (node.children instanceof Object) toc += indent + "  items: " + newline;
                 }
@@ -433,13 +443,15 @@ $(function () {
         node.data['toc'] = $("#nodeTitle").val();
         node.data['displayName'] = $('#nodeSearch').val();
         node.data['href'] = $("#nodeHref").val();
-        node.data['maintainContext'] = $('#nodeMaintainContext')[0].checked;
         node.data['uid'] = $("#nodeUid").val();
+        node.data['tocHref'] = $("#nodeToCHref").val();
+        node.data['topicHref'] = $("#nodeTopicHref").val();
         node.title = $("#nodeTitle").val() + titleFormat($("#nodeHref").val());
-
+        node.data['maintainContext'] = $('#nodeMaintainContext')[0].checked;
+        
         node.renderTitle();
 
-        updateActiveNode(e.type, node, node.data['toc'], node.data['href'], node.data['uid'], node['expanded'], node.data['displayName'], node.data['maintainContext']);
+        updateActiveNode(e.type, node, node.data['toc'], node.data['href'], node.data['uid'], node['expanded'], node.data['displayName'], node.data['tocHref'], node.data['topicHref'], node.data['maintainContext']);
 
     }).attr("disabled", true);
 
@@ -515,8 +527,10 @@ $(function () {
             toc: $("#newNodeTitle").val(),
             displayName: $("#newNodeSearch").val(),
             href: $("#newNodeHref").val(),
+            uid: $("#newNodeUid").val(),
+            tocHref: $("#newNodeToCHref").val(),
+            topicHref: $("#newNodeTopicHref").val(),
             maintainContext: $("#newNodeMaintainContext")[0].checked,
-            uid: $("#newNodeUid").val()
         });
 
         node.setExpanded();
