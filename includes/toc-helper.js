@@ -407,7 +407,8 @@ $(function () {
                     titleArr = lineArr[1].split("]");
                     title = titleArr[0] + newline;
                     hrefArr = titleArr[1].split("(");
-                    href = spaces + "  href: " + hrefArr[1].substring(0, hrefArr[1].length - 1) + newline;
+                    //href = spaces + "  href: " + hrefArr[1].substring(0, hrefArr[1].length - 1) + newline;
+                    href = spaces + "  " + evalHref(hrefArr[1].substring(0, hrefArr[1].length - 1)) + newline;
                 } else {
                     title = inStr.replace(lineArr[0] + " ", "") + newline;
                 }
@@ -423,6 +424,18 @@ $(function () {
                 var spaces = (inStr) * 2;
                 for (var i = 1; i <= spaces; i++) {
                     sOut += " ";
+                }
+                return sOut;
+            }
+
+            function evalHref(inStr) {
+                var sOut = "";
+                if (inStr.toLowerCase().substring(0, 4) === "xref") {
+                    var splitXref = inStr.split(":");
+                    sOut = "uid: " + splitXref[1];
+                    console.log("uid found: " + sOut);
+                } else {
+                    sOut = "href: " + inStr;
                 }
                 return sOut;
             }
@@ -448,7 +461,7 @@ $(function () {
         node.data['topicHref'] = $("#nodeTopicHref").val();
         node.title = $("#nodeTitle").val() + titleFormat($("#nodeHref").val());
         node.data['maintainContext'] = $('#nodeMaintainContext')[0].checked;
-        
+
         node.renderTitle();
 
         updateActiveNode(e.type, node, node.data['toc'], node.data['href'], node.data['uid'], node['expanded'], node.data['displayName'], node.data['tocHref'], node.data['topicHref'], node.data['maintainContext']);
