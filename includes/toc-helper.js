@@ -48,6 +48,8 @@ var jsonSource = [{
         }]
     }
 ];
+var qsMarkdown;
+var qsYAML;
 
 function titleFormat(val) {
     var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
@@ -145,6 +147,12 @@ function clearNewFields() {
     $("#nodeMaintainContext")[0].checked = false;
 }
 
+function loadFromQuerystring() {
+    var urlParams = new URLSearchParams(window.location.search);
+    qsMarkdown = decodeURIComponent(urlParams.get('md'));
+    qsYAML = decodeURIComponent(urlParams.get('yaml'));
+}
+
 $(function () {
     if (checkParameterExists("debug")) {
         $("#debug").show();
@@ -152,6 +160,16 @@ $(function () {
 
     $("#showHref")[0].checked = true;
     $("#codeText").attr("placeholder", codeTextDefaultText);
+
+     
+        if (qsMarkdown !== null) {
+            $("#codeText").val(qsMarkdown);
+            $("#tocLanguage").val("markdown");
+        }
+        if (qsYAML !== null) {
+            $("#codeText").val(qsYAML);
+            $("#tocLanguage").val("yaml");
+        }
 
     $("#copy").click(function (e) {
         //var copyTextarea = document.querySelector('codeText');
