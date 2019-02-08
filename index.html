@@ -32,6 +32,10 @@
     <link rel="stylesheet" type="text/css" href="includes/site.css" />
     -->
 
+    <script type="text/javascript">
+        loadFromQuerystring();
+    </script>
+
     <!-- Initialize the tree when page is loaded -->
     <script type="text/javascript">
         $(function () {
@@ -164,9 +168,13 @@
 
             var tree = $("#tree").fancytree("getTree");
         });
-    </script>
-    <script type="text/javascript">
-        loadFromQuerystring();
+
+        //  Populate the tree from Querystring (md or yaml)
+        $(function () {
+            if (updateTreeOnLoad) {
+                $("#makeTree").click();
+            }
+        });
     </script>
 </head>
 

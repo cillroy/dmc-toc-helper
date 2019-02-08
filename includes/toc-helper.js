@@ -50,6 +50,7 @@ var jsonSource = [{
 ];
 var qsMarkdown;
 var qsYAML;
+var updateTreeOnLoad = false;
 
 function titleFormat(val) {
     var outString = ($("#showHref").is(":checked")) ? " <em style='color: blue;'>(" + val + ")</em>" : "";
@@ -161,15 +162,17 @@ $(function () {
     $("#showHref")[0].checked = true;
     $("#codeText").attr("placeholder", codeTextDefaultText);
 
-     
-        if (qsMarkdown !== null) {
-            $("#codeText").val(qsMarkdown);
-            $("#tocLanguage").val("markdown");
-        }
-        if (qsYAML !== null) {
-            $("#codeText").val(qsYAML);
-            $("#tocLanguage").val("yaml");
-        }
+    if (qsMarkdown !== null && qsMarkdown.length > 0 && qsMarkdown !== "null") {
+        $("#codeText").val(qsMarkdown);
+        $("#tocLanguage").val("markdown");
+        updateTreeOnLoad = true;
+    }
+
+    if (qsYAML !== null && qsYAML.length > 0 && qsYAML !== "null") {
+        $("#codeText").val(qsYAML);
+        $("#tocLanguage").val("yaml");
+        updateTreeOnLoad = true;
+    }
 
     $("#copy").click(function (e) {
         //var copyTextarea = document.querySelector('codeText');
