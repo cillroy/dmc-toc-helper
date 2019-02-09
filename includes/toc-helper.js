@@ -150,7 +150,7 @@ function clearNewFields() {
 
 function loadFromQuerystring() {
     var urlParams = new URLSearchParams(window.location.search);
-    qsMarkdown = decodeURIComponent(urlParams.get('md'));
+    qsMarkdown = decodeURIComponent(urlParams.get('markdown'));
     qsYAML = decodeURIComponent(urlParams.get('yaml'));
 }
 
